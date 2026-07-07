@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 import MainProviders from "@/Providers/MainProviders";
 import Provider from "@/Providers/Provider";
 import { Toaster } from "sonner";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const montserrat = Montserrat({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["700"],
 });
 
 export const metadata: Metadata = {
-  title: "sktch Labs",
+  title: "The Wonder Emporium",
   description:
-    "Design amazing digital experiences that create more happy in the world.",
+    "Discover premium books, storytelling, wisdom, and leadership content curated for discerning readers.",
 };
 
 export default function RootLayout({
@@ -24,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>
+      <body className={`${inter.variable} ${montserrat.variable} antialiased`}>
         <MainProviders>
           <Provider> {children} </Provider>
         </MainProviders>

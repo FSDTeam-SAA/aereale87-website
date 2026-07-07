@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins), sans-serif;
-  --font-mono: var(--font-poppins), monospace;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-mono: var(--font-inter), monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -77,6 +77,14 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --home-surface: #fcfbf7;
+  --home-paper: #f6f2e8;
+  --home-border: #e8e0cc;
+  --home-gold: #cfaf45;
+  --home-green: #1e4d3a;
+  --home-green-deep: #1b2e24;
+  --home-ink: #1b2e24;
+  --home-muted: #66756d;
 }
 
 .dark {
@@ -120,7 +128,11 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-poppins), sans-serif !important;
+    font-family: var(--font-inter), sans-serif !important;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
 
@@ -128,6 +140,6 @@
   .container {
     max-width: 1536px;
     padding-inline: 1.5rem;
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-inter), sans-serif;
   }
 }
