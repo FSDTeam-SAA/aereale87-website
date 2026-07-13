@@ -1,78 +1,132 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown, Search, ShoppingBag } from "lucide-react";
+import { ChevronDown, Menu, Search, ShoppingBag } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { siteNavItems } from "@/data/catalog";
+import { cn } from "@/lib/utils";
+
+const navMenus: Record<string, { href: string; label: string }[]> = {
+  CATEGORIES: [
+    { href: "/categories?category=Leadership", label: "Leadership" },
+    { href: "/categories?category=Children%27s", label: "Children's" },
+    {
+      href: "/categories?category=Faith%20%26%20Wisdom",
+      label: "Faith & Wisdom",
+    },
+    { href: "/categories?category=Business", label: "Business" },
+  ],
+  AUTHORS: [
+    { href: "/authors/rodney-smith", label: "Rodney Smith" },
+    { href: "/authors/sarah-jenkins", label: "Sarah Jenkins" },
+    { href: "/authors/evelyn-reed", label: "Evelyn Reed" },
+  ],
+};
 
 export function SiteHeader({
-  ctaLabel = "Try it for free",
-  ctaHref = "#newsletter",
+  ctaLabel = "Account",
+  ctaHref = "/cart",
+  activeHref = "/categories",
 }: {
   ctaLabel?: string;
   ctaHref?: string;
+  activeHref?: string;
 }) {
   return (
-    <header className="bg-[var(--home-surface)]">
-      <div className="mx-auto flex max-w-[1920px] flex-col gap-4 px-5 py-4 sm:px-8 lg:h-[100px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
-        <Link href="/" className="shrink-0">
-          <Image
-            src="/home/logo-header.png"
-            alt="The Wonder Emporium logo"
-            width={150}
-            height={90}
-            priority
-            className="h-auto w-[104px] sm:w-[120px] lg:w-[150px]"
-          />
-        </Link>
-        <nav aria-label="Primary">
-          <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 lg:gap-x-9">
-            {siteNavItems.map((item, index) => (
-              <li
-                key={`${item.label}-${item.href}`}
-                className="flex items-center"
-              >
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "text-[14px] font-medium uppercase tracking-[0.2px] transition-colors duration-200 lg:text-[20px]",
-                    index === 2
-                      ? "font-bold text-[var(--home-ink)]"
-                      : "text-[var(--home-muted)] hover:text-[var(--home-ink)]",
-                  )}
+    <header className="sticky top-0 z-50 border-b border-[rgba(232,224,204,0.7)] bg-[var(--home-surface)]/95 backdrop-blur">
+      <div className="mx-auto flex max-w-[1920px] flex-col gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
+        <div className="flex items-center justify-between gap-4">
+          <Link href="/" className="shrink-0">
+            <Image
+              src="/home/logo-header.png"
+              alt="The Wonder Emporium logo"
+              width={150}
+              height={90}
+              priority
+              className="h-auto w-[96px] sm:w-[112px] lg:w-[132px]"
+            />
+          </Link>
+          <button
+            type="button"
+            aria-label="Open navigation"
+            className="inline-flex size-10 items-center justify-center border border-[var(--home-border)] text-[var(--home-green-deep)] lg:hidden"
+          >
+            <Menu className="size-5" />
+          </button>
+        </div>
+
+        <nav aria-label="Primary" className="overflow-visible">
+          <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 lg:gap-x-7 xl:gap-x-9">
+            {siteNavItems.map((item) => {
+              const menuItems = navMenus[item.label];
+              const isActive =
+                item.href === activeHref ||
+                (activeHref === "/categories" && item.label === "SHOP");
+
+              return (
+                <li
+                  key={`${item.label}-${item.href}`}
+                  className="group relative flex items-center"
                 >
-                  {item.label}
-                </Link>
-                {item.label === "CATEGORIES" || item.label === "AUTHORS" ? (
-                  <ChevronDown className="ml-1 size-4 text-[var(--home-muted)]" />
-                ) : null}
-              </li>
-            ))}
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "inline-flex items-center gap-1 py-2 text-[12px] font-medium uppercase transition-colors duration-200 sm:text-[13px] lg:text-[14px]",
+                      isActive
+                        ? "font-bold text-[var(--home-ink)]"
+                        : "text-[var(--home-muted)] hover:text-[var(--home-ink)]",
+                    )}
+                  >
+                    {item.label}
+                    {menuItems ? (
+                      <ChevronDown className="size-3.5 text-current transition-transform group-hover:rotate-180" />
+                    ) : null}
+                  </Link>
+
+                  {menuItems ? (
+                    <div className="invisible absolute left-1/2 top-full z-50 w-[220px] -translate-x-1/2 pt-3 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                      <div className="border border-[var(--home-border)] bg-white p-2 shadow-[0_18px_45px_rgba(27,46,36,0.12)]">
+                        {menuItems.map((menuItem) => (
+                          <Link
+                            key={menuItem.href}
+                            href={menuItem.href}
+                            className="block px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                          >
+                            {menuItem.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         </nav>
-        <div className="flex items-center justify-center gap-4 lg:justify-end">
+
+        <div className="flex items-center justify-center gap-3 lg:justify-end">
           <button
             type="button"
             aria-label="Search the catalog"
             className="text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
           >
-            <Search className="size-5 lg:size-6" />
-          </button>
-          <button
-            type="button"
-            aria-label="Shopping cart, 0 items"
-            className="relative text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
-          >
-            <ShoppingBag className="size-5 lg:size-6" />
-            <span className="absolute -right-2 -top-2 inline-flex size-4 items-center justify-center rounded-full bg-[var(--home-gold)] text-[10px] font-semibold text-[var(--home-ink)]">
-              0
-            </span>
+            <Search className="size-5" />
           </button>
           <Link
+            href="/cart"
+            aria-label="Shopping cart, 3 items"
+            className="relative text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
+          >
+            <ShoppingBag className="size-5" />
+            <span className="absolute -right-2 -top-2 inline-flex size-4 items-center justify-center rounded-full bg-[var(--home-gold)] text-[10px] font-semibold text-[var(--home-ink)]">
+              3
+            </span>
+          </Link>
+          <Link
             href={ctaHref}
-            className="inline-flex h-[46px] items-center gap-2 border border-[var(--home-gold)] px-4 text-[13px] font-bold uppercase tracking-[0.52px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)] lg:h-[64px] lg:px-8 lg:text-[16px]"
+            className="inline-flex h-10 items-center gap-2 border border-[var(--home-gold)] px-4 text-[12px] font-bold uppercase tracking-[0.52px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)] lg:h-11"
           >
             {ctaLabel}
+            <ChevronDown className="size-3.5" />
           </Link>
         </div>
       </div>

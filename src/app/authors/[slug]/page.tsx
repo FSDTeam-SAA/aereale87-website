@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { AuthorDetailPage } from "@/components/author/AuthorDetailPage";
+import { AuthorDetailPage } from "@/features/website/author/component/AuthorDetailPage";
 import { authorPages, getAuthorBySlug } from "@/data/catalog";
 
 type AuthorPageProps = {

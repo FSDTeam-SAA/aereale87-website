@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ProductDetailPage } from "@/components/product/ProductDetailPage";
+import { ProductDetailPage } from "@/features/website/product/component/ProductDetailPage";
 import { getProductBySlug, products } from "@/data/catalog";
 
 type ProductPageProps = {
