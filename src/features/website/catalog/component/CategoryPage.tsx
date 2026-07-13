@@ -113,8 +113,8 @@ export function CategoryPage() {
       <SiteHeader />
 
       <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:pb-20 lg:pt-20">
-        <div className="mx-auto max-w-[1920px]">
-          <div className="mx-auto max-w-[1680px] text-center">
+        <div className="mx-auto max-w-[1440px]">
+          <div className="mx-auto max-w-[1440px] text-center">
             <h1 className="text-[42px] leading-[1.2] font-bold text-[var(--home-green-deep)] lg:text-[48px]">
               Curated Categories
             </h1>
@@ -124,7 +124,7 @@ export function CategoryPage() {
             </p>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-[1680px] gap-8 lg:grid-cols-3">
+          <div className="mx-auto mt-12 grid max-w-[1440px] gap-8 lg:grid-cols-3">
             {featuredCategoryTiles.map((tile) => (
               <CategoryCard key={tile.title} tile={tile} />
             ))}
@@ -133,7 +133,7 @@ export function CategoryPage() {
       </section>
 
       <section className="bg-white px-5 py-14 sm:px-8 lg:px-[120px] lg:py-20">
-        <div className="mx-auto flex max-w-[1680px] flex-col gap-10 xl:flex-row xl:items-start">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-10 xl:flex-row xl:items-start">
           <aside className="w-full xl:sticky xl:top-8 xl:max-w-[320px]">
             <p className="mb-4 text-[16px] leading-[1.2] text-[var(--home-muted)]">
               Showing {filteredProducts.length === 0 ? 0 : startIndex}-
@@ -317,13 +317,13 @@ export function CategoryPage() {
       <FeaturedBanner />
 
       <section className="px-5 py-14 sm:px-8 lg:px-[120px] lg:py-20">
-        <div className="mx-auto max-w-[1680px] text-center">
+        <div className="mx-auto max-w-[1440px] text-center">
           <h2 className="text-[38px] leading-10 font-semibold text-[var(--home-green-deep)] sm:text-[54px]">
             Meet Future Founding Authors
           </h2>
           <div className="mx-auto mt-5 h-1 w-12 bg-[var(--home-gold)]" />
         </div>
-        <div className="mx-auto mt-12 grid max-w-[1680px] gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="mx-auto mt-12 grid max-w-[1440px] gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {authors.map((author, index) => (
             <AuthorCard key={`${author.name}-${index}`} author={author} />
           ))}

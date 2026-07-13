@@ -11,7 +11,7 @@ export const navItems: NavItem[] = [
   { href: "/", label: "HOME" },
   { href: "/categories", label: "CATEGORIES" },
   { href: "/categories", label: "SHOP" },
-  { href: "/#authors", label: "AUTHORS" },
+  { href: "/authors", label: "AUTHORS" },
   { href: "/about", label: "ABOUT" },
 ];
 

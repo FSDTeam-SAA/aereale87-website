@@ -3,7 +3,7 @@ import { missionItems } from "../api/about.data";
 export function AboutMission() {
   return (
     <section className="bg-white px-5 py-14 sm:px-8 lg:px-[120px] lg:py-16">
-      <div className="mx-auto max-w-[1680px]">
+      <div className="mx-auto max-w-[1440px]">
         <h2 className="text-center text-[34px] font-bold leading-[1.15] text-[var(--home-green-deep)] sm:text-[42px]">
           Our Mission
         </h2>

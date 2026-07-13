@@ -19,7 +19,7 @@ export function HomeHero() {
         />
         <div className="absolute inset-0 bg-black/38" />
       </div>
-      <div className="relative mx-auto flex min-h-[889px] w-full max-w-[1920px] items-center justify-center px-5 py-20 text-center sm:px-8 lg:px-[325px] lg:pt-[235px]">
+      <div className="relative mx-auto flex min-h-[889px] w-full  items-center justify-center px-5 py-20 text-center sm:px-8 lg:px-[325px] lg:pt-[235px]">
         <div className="flex max-w-[1271px] flex-col items-center gap-10">
           <div className="flex max-w-[1271px] flex-col items-center gap-4">
             <h1

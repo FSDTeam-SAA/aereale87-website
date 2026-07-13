@@ -15,16 +15,11 @@ const navMenus: Record<string, { href: string; label: string }[]> = {
     },
     { href: "/categories?category=Business", label: "Business" },
   ],
-  AUTHORS: [
-    { href: "/authors/rodney-smith", label: "Rodney Smith" },
-    { href: "/authors/sarah-jenkins", label: "Sarah Jenkins" },
-    { href: "/authors/evelyn-reed", label: "Evelyn Reed" },
-  ],
 };
 
 export function SiteHeader({
   ctaLabel = "Account",
-  ctaHref = "/cart",
+  ctaHref = "/auth/login",
   activeHref = "/categories",
 }: {
   ctaLabel?: string;
@@ -33,7 +28,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="sticky top-0 z-50 border-b border-[rgba(232,224,204,0.7)] bg-[var(--home-surface)]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-[1920px] flex-col gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
+      <div className="mx-auto container flex  flex-col gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="shrink-0">
             <Image
@@ -60,6 +55,8 @@ export function SiteHeader({
               const menuItems = navMenus[item.label];
               const isActive =
                 item.href === activeHref ||
+                (activeHref.startsWith("/authors") &&
+                  item.href === "/authors") ||
                 (activeHref === "/categories" && item.label === "SHOP");
 
               return (

@@ -29,7 +29,7 @@ const specIcons = [
 export function AboutBookSection({ product }: { product: Product }) {
   return (
     <section className="bg-[var(--home-paper)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
-      <div className="mx-auto max-w-[1680px] text-center">
+      <div className="mx-auto max-w-[1440px] text-center">
         <h2 className="text-[42px] font-bold leading-[1.2] text-[var(--home-green-deep)]">
           About This Book
         </h2>
@@ -47,7 +47,7 @@ export function AboutBookSection({ product }: { product: Product }) {
 export function SpecificationsSection({ product }: { product: Product }) {
   return (
     <section className="bg-[var(--home-surface)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
-      <div className="mx-auto max-w-[1680px]">
+      <div className="mx-auto max-w-[1440px]">
         <h2 className="text-center text-[42px] font-bold leading-[1.2] text-[var(--home-green-deep)]">
           Book Specifications
         </h2>
@@ -81,7 +81,7 @@ export function AuthorSpotlightSection({ product }: { product: Product }) {
 
   return (
     <section className="bg-[var(--home-paper)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
-      <div className="mx-auto max-w-[1680px] overflow-hidden bg-white px-8 py-8 shadow-[0_10px_25px_rgba(27,46,36,0.05)] lg:px-12">
+      <div className="mx-auto max-w-[1440px] overflow-hidden bg-white px-8 py-8 shadow-[0_10px_25px_rgba(27,46,36,0.05)] lg:px-12">
         <div className="grid gap-8 lg:grid-cols-[248px_1fr_200px] lg:items-center">
           <Image
             src={profile.image}
@@ -152,7 +152,7 @@ export function ReviewsSection({ product }: { product: Product }) {
 
   return (
     <section className="bg-[var(--home-surface)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
-      <div className="mx-auto max-w-[1680px]">
+      <div className="mx-auto max-w-[1440px]">
         <h2 className="text-center text-[42px] font-bold leading-[1.2] text-[var(--home-green-deep)]">
           Customer Reviews
         </h2>
@@ -253,7 +253,7 @@ export function ReviewsSection({ product }: { product: Product }) {
 export function RecommendationsSection() {
   return (
     <section className="bg-[var(--home-paper)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
-      <div className="mx-auto max-w-[1680px]">
+      <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <h2 className="text-[42px] font-bold leading-[1.2] text-[var(--home-green)]">
             You May Also Like

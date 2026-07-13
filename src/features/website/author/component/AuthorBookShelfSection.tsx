@@ -14,7 +14,7 @@ export function AuthorBookShelfSection({
     <section
       className={`px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20 ${className ?? ""}`}
     >
-      <div className="mx-auto max-w-[1680px]">
+      <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-[40px] font-bold leading-[1.1] text-[var(--home-green)]">
             {shelf.title}

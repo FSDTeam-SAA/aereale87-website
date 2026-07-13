@@ -56,7 +56,7 @@ export function BookCard({ book }: { book: BookItem }) {
           </p>
           <HomeCta
             href={book.href}
-            className="flex w-full text-center text-white hover:text-white"
+            className="flex w-full text-center text-[var(--home-gold)] hover:text-white"
             invert={false}
           >
             Add To Cart

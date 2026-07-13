@@ -10,7 +10,7 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
       id="about"
       className="bg-white px-5 py-14 sm:px-8 lg:px-[120px] lg:py-20"
     >
-      <div className="mx-auto max-w-[1680px]">
+      <div className="mx-auto max-w-[1440px]">
         <div className="grid gap-12 lg:grid-cols-[528px_repeat(4,minmax(0,240px))]">
           <div>
             <Image

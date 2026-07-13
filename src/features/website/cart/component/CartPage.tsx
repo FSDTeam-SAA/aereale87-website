@@ -52,7 +52,7 @@ export function CartPage() {
       </section>
 
       <section className="px-5 py-12 sm:px-8 lg:px-[120px] lg:py-16">
-        <div className="mx-auto grid max-w-[1680px] gap-8 xl:grid-cols-[1fr_420px]">
+        <div className="mx-auto grid max-w-[1440px] gap-8 xl:grid-cols-[1fr_420px]">
           <div>
             <div className="mb-5 flex items-center justify-between gap-4">
               <h2 className="text-[28px] font-bold leading-[1.2]">
@@ -211,7 +211,7 @@ export function CartPage() {
       </section>
 
       <section className="bg-[var(--home-paper)] px-5 py-14 sm:px-8 lg:px-[120px] lg:py-16">
-        <div className="mx-auto max-w-[1680px]">
+        <div className="mx-auto max-w-[1440px]">
           <h2 className="text-center text-[28px] font-bold leading-[1.2] sm:text-[36px]">
             You May Also Like
           </h2>
@@ -265,7 +265,7 @@ export function CartPage() {
       </section>
 
       <section className="bg-white px-5 py-10 sm:px-8 lg:px-[120px]">
-        <div className="mx-auto grid max-w-[1680px] gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mx-auto grid max-w-[1440px] gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {cartBenefits.map((benefit, index) => {
             const Icon = benefitIcons[index];
 

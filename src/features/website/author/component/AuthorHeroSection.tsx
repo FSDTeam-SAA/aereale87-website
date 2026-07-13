@@ -9,7 +9,7 @@ export function AuthorHeroSection({ author }: { author: AuthorPageData }) {
       <div className="absolute -right-10 top-0 size-[120px] rounded-bl-[80px] bg-[rgba(232,224,204,0.7)] sm:size-[180px]" />
       <div className="absolute bottom-0 left-[8%] hidden size-[120px] -translate-y-1/2 rounded-tr-[80px] bg-[rgba(232,224,204,0.5)] lg:block" />
 
-      <div className="relative mx-auto flex max-w-[1680px] justify-center">
+      <div className="relative mx-auto flex max-w-[1440px] justify-center">
         <div className="w-full max-w-[1056px] text-center">
           <div className="mx-auto w-full max-w-[358px] border border-[rgba(27,46,36,0.08)] bg-white p-1.5 shadow-[0_12px_30px_rgba(27,46,36,0.08)]">
             <Image

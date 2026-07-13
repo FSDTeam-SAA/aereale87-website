@@ -59,7 +59,7 @@ export function CheckoutPage() {
       <SiteHeader activeHref="/cart" />
 
       <section className="px-5 py-12 sm:px-8 lg:px-[120px] lg:py-16">
-        <div className="mx-auto grid max-w-[1680px] gap-10 xl:grid-cols-[1fr_410px] xl:items-start">
+        <div className="mx-auto grid max-w-[1440px] gap-10 xl:grid-cols-[1fr_410px] xl:items-start">
           <div>
             <h1 className="text-[40px] font-bold leading-[1.1] sm:text-[54px]">
               Complete Your Order

@@ -21,7 +21,7 @@ export function ProductHero({ product }: { product: Product }) {
 
   return (
     <section className="px-5 py-10 sm:px-8 lg:px-[120px] lg:py-20">
-      <div className="mx-auto grid max-w-[1680px] gap-12 lg:grid-cols-[816px_816px]">
+      <div className="mx-auto grid max-w-[1440px] gap-12 lg:grid-cols-2">
         <div className="border border-[var(--home-border)] bg-white p-[1px]">
           <div className="relative min-h-[520px] bg-[var(--home-paper)] lg:min-h-[798px]">
             <Image
