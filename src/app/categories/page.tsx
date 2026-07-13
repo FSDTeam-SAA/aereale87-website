@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { CategoryPage } from "@/components/catalog/CategoryPage";
+import { CategoryPage } from "@/features/website/catalog/component/CategoryPage";
 
 export default function CategoriesPage() {
   return (

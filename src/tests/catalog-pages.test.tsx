@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 
-import { AuthorDetailPage } from "@/components/author/AuthorDetailPage";
-import { CategoryPage } from "@/components/catalog/CategoryPage";
-import { ProductDetailPage } from "@/components/product/ProductDetailPage";
+import { AuthorDetailPage } from "@/features/website/author/component/AuthorDetailPage";
+import { CategoryPage } from "@/features/website/catalog/component/CategoryPage";
+import { ProductDetailPage } from "@/features/website/product/component/ProductDetailPage";
 import { getAuthorBySlug, getProductBySlug } from "@/data/catalog";
 
 jest.mock("next/navigation", () => ({
