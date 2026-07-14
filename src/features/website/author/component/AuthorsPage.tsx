@@ -19,7 +19,7 @@ export function AuthorsPage() {
           <p className="text-[13px] font-bold uppercase tracking-[1.3px] text-[var(--home-gold)]">
             Author Community
           </p>
-          <h1 className="mt-4 text-balance text-[42px] font-bold leading-[1.12] text-[var(--home-green-deep)] sm:text-[58px]">
+          <h1 className="mt-4 text-balance text-[42px] font-bold leading-[1.12] text-[var(--home-green-deep)] sm:text-[54px]">
             Meet Future Founding Authors
           </h1>
           <p className="mx-auto mt-5 max-w-[760px] text-[18px] leading-[1.5] text-[var(--home-muted)] sm:text-[22px]">

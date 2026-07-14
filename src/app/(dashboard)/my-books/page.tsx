@@ -1,4 +1,4 @@
-import { MyBooksPage } from "@/features/website/dashboard/component/MyBooksPage";
+import { MyBooksPage } from "@/features/dashboard/myBooks/component/MyBooksPage";
 
 export default function MyBooks() {
   return <MyBooksPage />;

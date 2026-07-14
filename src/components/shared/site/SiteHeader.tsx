@@ -7,20 +7,26 @@ import { cn } from "@/lib/utils";
 
 const navMenus: Record<string, { href: string; label: string }[]> = {
   CATEGORIES: [
-    { href: "/categories?category=Leadership", label: "Leadership" },
-    { href: "/categories?category=Children%27s", label: "Children's" },
     {
-      href: "/categories?category=Faith%20%26%20Wisdom",
+      href: "/categories?view=shop&category=Leadership",
+      label: "Leadership",
+    },
+    {
+      href: "/categories?view=shop&category=Children%27s",
+      label: "Children's",
+    },
+    {
+      href: "/categories?view=shop&category=Faith%20%26%20Wisdom",
       label: "Faith & Wisdom",
     },
-    { href: "/categories?category=Business", label: "Business" },
+    { href: "/categories?view=shop&category=Business", label: "Business" },
   ],
 };
 
 export function SiteHeader({
   ctaLabel = "Account",
   ctaHref = "/auth/login",
-  activeHref = "/categories",
+  activeHref = "/categories?view=categories",
 }: {
   ctaLabel?: string;
   ctaHref?: string;
@@ -32,12 +38,12 @@ export function SiteHeader({
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="shrink-0">
             <Image
-              src="/home/logo-header.png"
+              src="/images/logo.svg"
               alt="The Wonder Emporium logo"
-              width={150}
-              height={90}
+              width={220}
+              height={220}
               priority
-              className="h-auto w-[96px] sm:w-[112px] lg:w-[132px]"
+              className="h-auto w-[130px] sm:w-[150px] lg:w-[120px]"
             />
           </Link>
           <button
@@ -55,9 +61,7 @@ export function SiteHeader({
               const menuItems = navMenus[item.label];
               const isActive =
                 item.href === activeHref ||
-                (activeHref.startsWith("/authors") &&
-                  item.href === "/authors") ||
-                (activeHref === "/categories" && item.label === "SHOP");
+                (activeHref.startsWith("/authors") && item.href === "/authors");
 
               return (
                 <li

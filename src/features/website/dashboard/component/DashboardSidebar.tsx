@@ -10,7 +10,7 @@ export function DashboardSidebar({ activeHref }: { activeHref: string }) {
       <div className="flex w-full items-center gap-4 px-4 py-4 lg:block lg:px-0 lg:py-7">
         <Link href="/" className="block shrink-0 lg:text-center">
           <Image
-            src="/home/logo-header.png"
+            src="/images/logo.svg"
             alt="The Wonder Emporium logo"
             width={140}
             height={84}

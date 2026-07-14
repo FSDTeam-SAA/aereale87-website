@@ -1,40 +1,14 @@
 import Image from "next/image";
 import { Copy, EyeOff } from "lucide-react";
 
-import { DashboardShell } from "./DashboardShell";
+import { DashboardShell } from "@/features/website/dashboard/component/DashboardShell";
 
-function SettingsInput({
-  label,
-  defaultValue,
-  placeholder,
-  type = "text",
-  action,
-}: {
-  label: string;
-  defaultValue?: string;
-  placeholder?: string;
-  type?: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="text-[14px] font-medium text-[var(--home-green-deep)]">
-        {label}
-      </span>
-      <span className="mt-2 flex h-12 items-center border border-[var(--home-border)] bg-[var(--home-surface)] px-4 focus-within:border-[var(--home-gold)]">
-        <input
-          type={type}
-          defaultValue={defaultValue}
-          placeholder={placeholder}
-          className="min-w-0 flex-1 bg-transparent text-[14px] text-[var(--home-green-deep)] outline-none placeholder:text-[var(--home-muted)]"
-        />
-        {action}
-      </span>
-    </label>
-  );
-}
+import { SettingsInput } from "./SettingsInput";
+import { useSettingsData } from "../hooks/useSettingsData";
 
 export function SettingsPage() {
+  const { profile } = useSettingsData();
+
   return (
     <DashboardShell activeHref="/settings" title="Settings">
       <div className="space-y-4">
@@ -43,8 +17,8 @@ export function SettingsPage() {
 
           <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
             <Image
-              src="/home/reviewer-1.png"
-              alt="Wade Warren"
+              src={profile.avatar}
+              alt={profile.name}
               width={96}
               height={96}
               className="size-20 rounded-full object-cover sm:size-24"
@@ -52,14 +26,14 @@ export function SettingsPage() {
             <div>
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="text-[18px] font-bold text-[var(--home-green-deep)]">
-                  Wade Warren
+                  {profile.name}
                 </h3>
                 <span className="rounded-full border border-[var(--home-gold)] bg-[rgba(207,175,69,0.12)] px-3 py-1 text-[12px] font-semibold text-[var(--home-gold)]">
-                  Bronze
+                  {profile.badge}
                 </span>
               </div>
               <p className="mt-2 inline-flex items-center gap-3 text-[15px] text-[var(--home-muted)]">
-                wade.warren@example.com
+                {profile.email}
                 <button
                   type="button"
                   aria-label="Copy email"
@@ -72,17 +46,20 @@ export function SettingsPage() {
           </div>
 
           <form className="mt-8 grid gap-5 md:grid-cols-2">
-            <SettingsInput label="First Name" defaultValue="Wade" />
-            <SettingsInput label="Last Name" defaultValue="Warren" />
+            <SettingsInput
+              label="First Name"
+              defaultValue={profile.firstName}
+            />
+            <SettingsInput label="Last Name" defaultValue={profile.lastName} />
             <SettingsInput
               label="Password"
               type="password"
-              defaultValue="password123"
+              defaultValue={profile.password}
               action={<EyeOff className="size-4 text-[var(--home-muted)]" />}
             />
             <SettingsInput
               label="Phone Number"
-              defaultValue="(406) 555-0120"
+              defaultValue={profile.phoneNumber}
               action={
                 <span className="ml-3 flex items-center gap-2 border-l border-[var(--home-border)] pl-3 text-[18px]">
                   🇺🇸
@@ -92,14 +69,8 @@ export function SettingsPage() {
                 </span>
               }
             />
-            <SettingsInput
-              label="E-mail"
-              defaultValue="wade.warren@example.com"
-            />
-            <SettingsInput
-              label="Location"
-              defaultValue="2972 Westheimer Rd. Santa Ana, Illinois 85486"
-            />
+            <SettingsInput label="E-mail" defaultValue={profile.email} />
+            <SettingsInput label="Location" defaultValue={profile.location} />
           </form>
         </section>
 

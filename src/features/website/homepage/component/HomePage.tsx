@@ -58,7 +58,7 @@ export default function HomePage() {
 
       <HomeSection className="bg-[var(--home-paper)]">
         <div className="text-center">
-          <h2 className="text-[38px] leading-[1.2] font-semibold text-[#18233a] sm:text-[58px]">
+          <h2 className="text-[38px] leading-[1.2] font-semibold text-[#18233a] sm:text-[52px]">
             What OurReaders Say
           </h2>
         </div>

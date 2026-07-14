@@ -9,7 +9,7 @@ export function FoundingProgram({ benefits }: { benefits: string[] }) {
   return (
     <HomeSection className="bg-[var(--home-surface)]">
       <div className="grid gap-10 lg:grid-cols-[816px_minmax(0,816px)] lg:items-center lg:gap-12">
-        <div className="relative min-h-[320px] overflow-hidden">
+        <div className="relative min-h-[620px] overflow-hidden">
           <Image
             src="/home/founding-author.png"
             alt="Luxury desk scene for founding author program"
@@ -19,10 +19,10 @@ export function FoundingProgram({ benefits }: { benefits: string[] }) {
           />
         </div>
         <div className="space-y-8">
-          <h2 className="text-[38px] leading-[1.2] font-bold text-[var(--home-green-deep)] sm:text-[48px]">
+          <h2 className="text-[32px] font-bold text-[var(--home-green-deep)] sm:text-[40px]">
             Become A Founding Author
           </h2>
-          <p className="text-[20px] leading-[1.2] text-[var(--home-muted)] sm:text-[24px]">
+          <p className="text-[20px] text-[var(--home-muted)] sm:text-[20px]">
             Join the first 100 authors and help shape the future of The Wonder
             Emporium. Elevate your storytelling to a premium audience.
           </p>
@@ -31,11 +31,11 @@ export function FoundingProgram({ benefits }: { benefits: string[] }) {
               const Icon = icons[index];
 
               return (
-                <li key={benefit} className="flex items-center gap-5">
+                <li key={benefit} className="flex items-center gap-3">
                   <span className="inline-flex size-12 items-center justify-center rounded-full bg-[var(--home-paper)] text-[var(--home-green-deep)]">
                     <Icon className="size-5" />
                   </span>
-                  <span className="text-[24px] leading-[1.2] text-[var(--home-green-deep)] sm:text-[28px]">
+                  <span className="text-[24px] text-[var(--home-green-deep)] sm:text-[24px]">
                     {benefit}
                   </span>
                 </li>

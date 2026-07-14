@@ -36,7 +36,7 @@ export function HomeCta({
     <Link
       href={href}
       className={cn(
-        "inline-flex h-[58px] items-center justify-center border px-8 text-center text-[16px] font-bold uppercase tracking-[0.64px] transition duration-300 [font-family:var(--font-display)]",
+        "inline-flex h-[58px] items-center justify-center text-left border text-[14px] font-bold uppercase tracking-[0.64px] transition duration-300 [font-family:var(--font-display)]",
         invert
           ? "border-[var(--home-gold)] bg-[var(--home-gold)] text-white hover:bg-transparent hover:text-[var(--home-gold)]"
           : "border-[var(--home-gold)] bg-transparent text-[var(--home-gold)] hover:bg-[var(--home-gold)] hover:text-white",

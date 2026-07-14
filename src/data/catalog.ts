@@ -70,8 +70,8 @@ export type CategoryTile = {
 
 export const siteNavItems = [
   { href: "/", label: "HOME" },
-  { href: "/categories", label: "CATEGORIES" },
-  { href: "/categories", label: "SHOP" },
+  { href: "/categories?view=categories", label: "CATEGORIES" },
+  { href: "/categories?view=shop", label: "SHOP" },
   { href: "/authors", label: "AUTHORS" },
   { href: "/about", label: "ABOUT" },
 ] as const;
@@ -677,41 +677,41 @@ export const featuredCategoryTiles: CategoryTile[] = [
   {
     title: "Leadership & Growth",
     subtitle: "Explore",
-    href: "/categories?category=Leadership",
+    href: "/categories?view=shop&category=Leadership",
     image: "/catalog/category-leadership.png",
     icon: "spark",
   },
   {
     title: "Children's Adventures",
     subtitle: "Explore",
-    href: "/categories?category=Children%27s",
+    href: "/categories?view=shop&category=Children%27s",
     image: "/catalog/category-children.png",
     icon: "spark",
   },
   {
     title: "Faith & Wisdom",
     subtitle: "Explore",
-    href: "/categories?category=Faith%20%26%20Wisdom",
+    href: "/categories?view=shop&category=Faith%20%26%20Wisdom",
     image: "/catalog/category-faith.png",
     icon: "spark",
   },
   {
     title: "New Releases",
     subtitle: "Discover the latest additions.",
-    href: "/categories?category=All%20Categories",
+    href: "/categories?view=shop&category=All%20Categories",
     icon: "spark",
   },
   {
     title: "Best Sellers",
     subtitle: "Our most loved titles.",
-    href: "/categories?category=Leadership",
+    href: "/categories?view=shop&category=Leadership",
     icon: "star",
     emphasized: true,
   },
   {
     title: "Digital Books",
     subtitle: "Read anywhere, anytime.",
-    href: "/categories?format=eBook",
+    href: "/categories?view=shop&format=eBook",
     icon: "tablet",
   },
 ];

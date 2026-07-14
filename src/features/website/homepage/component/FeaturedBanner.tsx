@@ -7,7 +7,7 @@ export function FeaturedBanner() {
     <section className="relative overflow-hidden bg-[var(--home-green-deep)] px-5 py-16 text-center sm:px-8 lg:px-[272px] lg:py-24">
       <div className="absolute inset-0">
         <Image
-          src="/home/masters-library.png"
+          src="/images/master_library.png"
           alt=""
           fill
           sizes="100vw"

@@ -29,8 +29,12 @@ const pageSize = 12;
 
 export function CategoryPage() {
   const searchParams = useSearchParams();
+  const view = searchParams.get("view");
   const queryCategory = searchParams.get("category");
   const queryFormat = searchParams.get("format");
+  const showCategoryCards = view !== "shop";
+  const activeNavHref =
+    view === "shop" ? "/categories?view=shop" : "/categories?view=categories";
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedFormats, setSelectedFormats] = useState<string[] | null>(null);
@@ -110,27 +114,29 @@ export function CategoryPage() {
 
   return (
     <main className="bg-[var(--home-surface)] text-[var(--home-green-deep)]">
-      <SiteHeader />
+      <SiteHeader activeHref={activeNavHref} />
 
-      <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:pb-20 lg:pt-20">
-        <div className="mx-auto max-w-[1440px]">
-          <div className="mx-auto max-w-[1440px] text-center">
-            <h1 className="text-[42px] leading-[1.2] font-bold text-[var(--home-green-deep)] lg:text-[48px]">
-              Curated Categories
-            </h1>
-            <p className="mx-auto mt-4 max-w-[933px] text-[20px] leading-[1.2] text-[var(--home-muted)] lg:text-[24px]">
-              Explore our carefully selected collections designed to elevate
-              your mind and spirit.
-            </p>
-          </div>
+      {showCategoryCards ? (
+        <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:pb-20 lg:pt-20">
+          <div className="mx-auto max-w-[1440px]">
+            <div className="mx-auto max-w-[1440px] text-center">
+              <h1 className="text-[42px] leading-[1.2] font-bold text-[var(--home-green-deep)] lg:text-[48px]">
+                Curated Categories
+              </h1>
+              <p className="mx-auto mt-4 max-w-[933px] text-[20px] leading-[1.2] text-[var(--home-muted)] lg:text-[24px]">
+                Explore our carefully selected collections designed to elevate
+                your mind and spirit.
+              </p>
+            </div>
 
-          <div className="mx-auto mt-12 grid max-w-[1440px] gap-8 lg:grid-cols-3">
-            {featuredCategoryTiles.map((tile) => (
-              <CategoryCard key={tile.title} tile={tile} />
-            ))}
+            <div className="mx-auto mt-12 grid max-w-[1440px] gap-8 lg:grid-cols-3">
+              {featuredCategoryTiles.map((tile) => (
+                <CategoryCard key={tile.title} tile={tile} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="bg-white px-5 py-14 sm:px-8 lg:px-[120px] lg:py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-10 xl:flex-row xl:items-start">

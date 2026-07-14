@@ -11,7 +11,7 @@ export function NewsletterSignup() {
       <div className="absolute inset-y-0 left-0 hidden w-[42%] bg-[linear-gradient(165deg,transparent_24%,rgba(255,255,255,0.4)_24%,rgba(255,255,255,0.4)_76%,transparent_76%)] lg:block" />
       <div className="absolute inset-y-0 right-0 hidden w-[42%] bg-[linear-gradient(345deg,transparent_24%,rgba(255,255,255,0.4)_24%,rgba(255,255,255,0.4)_76%,transparent_76%)] lg:block" />
       <div className="relative mx-auto max-w-[1440px] text-center">
-        <div className="mx-auto flex max-w-[576px] flex-col items-center">
+        <div className="mx-auto flex max-w-[676px] flex-col items-center">
           <Mail className="mb-4 size-12 text-[var(--home-green)]" />
           <h2 className="text-balance text-[38px] leading-[1.2] font-semibold text-[var(--home-green-deep)] sm:text-[48px]">
             Join The Wonder Community
