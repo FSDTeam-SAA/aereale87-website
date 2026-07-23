@@ -1,25 +1,4 @@
-import { products } from "@/data/catalog";
-
-import type { CartBenefit, CartItem } from "../types/cart.types";
-
-const cartSlugs = [
-  "architecture-of-leadership",
-  "pain-habit",
-  "create-your-own-business",
-];
-
-export const cartItems: CartItem[] = cartSlugs.map((slug) => {
-  const product = products.find((item) => item.slug === slug)!;
-
-  return {
-    slug: product.slug,
-    title: product.title,
-    author: product.author,
-    price: product.price,
-    cover: product.cover,
-    quantity: 1,
-  };
-});
+import type { CartBenefit } from "../types/cart.types";
 
 export const cartBenefits: CartBenefit[] = [
   {

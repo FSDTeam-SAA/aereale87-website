@@ -10,6 +10,8 @@ export function AuthorBookShelfSection({
   shelf: AuthorBookShelf;
   className?: string;
 }) {
+  if (!shelf.products.length) return null;
+
   return (
     <section
       className={`px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20 ${className ?? ""}`}
@@ -20,7 +22,7 @@ export function AuthorBookShelfSection({
             {shelf.title}
           </h2>
           <HomeCta
-            href="/categories"
+            href="/categories?view=shop"
             className="h-[50px] w-full px-6 text-[12px] sm:w-auto"
           >
             View All

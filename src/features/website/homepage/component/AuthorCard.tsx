@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -6,9 +7,8 @@ import type { AuthorItem } from "../types/homepage.types";
 
 export function AuthorCard({ author }: { author: AuthorItem }) {
   const badgeMuted = author.badge === "Rising Author";
-
-  return (
-    <article className="border border-[var(--home-border)] bg-white px-6 py-6 sm:px-8">
+  const content = (
+    <>
       <div className="flex flex-col items-center">
         <div className="relative mb-4">
           <Image
@@ -58,6 +58,23 @@ export function AuthorCard({ author }: { author: AuthorItem }) {
           <dt className="text-[16px] leading-[1.2] text-[#6f756d]">Readers</dt>
         </div>
       </dl>
+    </>
+  );
+
+  if (author.href) {
+    return (
+      <Link
+        href={author.href}
+        className="block border border-[var(--home-border)] bg-white px-6 py-6 transition hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(27,46,36,0.08)] sm:px-8"
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <article className="block border border-[var(--home-border)] bg-white px-6 py-6 sm:px-8">
+      {content}
     </article>
   );
 }

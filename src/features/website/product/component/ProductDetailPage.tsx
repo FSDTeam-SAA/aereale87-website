@@ -19,7 +19,13 @@ import {
   SpecificationsSection,
 } from "./ProductSections";
 
-export function ProductDetailPage({ product }: { product: Product }) {
+export function ProductDetailPage({
+  product,
+  recommendations,
+}: {
+  product: Product;
+  recommendations?: Product[];
+}) {
   return (
     <main className="bg-[var(--home-surface)] text-[var(--home-green-deep)]">
       <SiteHeader />
@@ -28,7 +34,7 @@ export function ProductDetailPage({ product }: { product: Product }) {
       <SpecificationsSection product={product} />
       <AuthorSpotlightSection product={product} />
       <ReviewsSection product={product} />
-      <RecommendationsSection />
+      <RecommendationsSection products={recommendations} />
       <FoundingProgram benefits={foundingBenefits} />
       <NewsletterSignup />
       <HomeFooter columns={footerColumns} />

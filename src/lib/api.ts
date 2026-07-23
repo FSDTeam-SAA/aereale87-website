@@ -36,7 +36,7 @@ api.interceptors.response.use(
 
       // If there's an error in the session (refresh failed), log out
       if (session?.error === "RefreshAccessTokenError") {
-        signOut({ callbackUrl: "/login" });
+        void signOut({ callbackUrl: "/auth/login" });
         return Promise.reject(error);
       }
 

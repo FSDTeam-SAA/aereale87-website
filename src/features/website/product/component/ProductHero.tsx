@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import { Minus, Plus, Star } from "lucide-react";
 
+import { AddToCartButton } from "@/features/website/cart/component/AddToCartButton";
 import type { Product } from "@/data/catalog";
 
 export function ProductHero({ product }: { product: Product }) {
@@ -61,16 +62,22 @@ export function ProductHero({ product }: { product: Product }) {
             </span>
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3 text-[16px] text-[var(--home-muted)]">
-            <div className="flex items-center gap-1 text-[var(--home-gold)]">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Star
-                  key={index}
-                  className="size-4 fill-transparent stroke-current"
-                />
-              ))}
-            </div>
-            <span>{product.rating.toFixed(1)}</span>
-            <span className="underline">({product.reviewCount} Reviews)</span>
+            {product.rating > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-[var(--home-gold)]">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star
+                      key={index}
+                      className={`size-4 ${index < Math.round(product.rating) ? "fill-current stroke-current" : "fill-transparent stroke-current"}`}
+                    />
+                  ))}
+                </div>
+                <span>{product.rating.toFixed(1)}</span>
+                <span className="underline">
+                  ({product.reviewCount} Reviews)
+                </span>
+              </>
+            )}
           </div>
           <p className="mt-8 text-[40px] font-bold leading-[1.2] text-[var(--home-green)]">
             {selectedFormat.price}
@@ -131,12 +138,12 @@ export function ProductHero({ product }: { product: Product }) {
                 <Plus className="size-4" />
               </button>
             </div>
-            <button className="inline-flex h-[58px] min-w-[196px] items-center justify-center bg-[var(--home-gold)] px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)] [font-family:var(--font-display)]">
-              Buy Now
-            </button>
-            <button className="inline-flex h-[58px] min-w-[196px] items-center justify-center border border-[var(--home-gold)] bg-white px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)]">
-              Add To Cart
-            </button>
+            <AddToCartButton
+              bookId={product.slug}
+              formatId={selectedFormat?.id}
+              quantity={quantity}
+              className="inline-flex h-[58px] min-w-[196px] items-center justify-center border border-[var(--home-gold)] bg-white px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
+            />
           </div>
         </div>
       </div>

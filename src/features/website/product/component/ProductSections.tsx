@@ -12,7 +12,6 @@ import {
   Star,
 } from "lucide-react";
 
-import { getAuthorSlug, recommendedProducts } from "@/data/catalog";
 import type { Product } from "@/data/catalog";
 
 const specIcons = [
@@ -78,6 +77,7 @@ export function SpecificationsSection({ product }: { product: Product }) {
 
 export function AuthorSpotlightSection({ product }: { product: Product }) {
   const profile = product.authorProfile;
+  const hasRealData = profile.books !== "0" || profile.rating !== "0.0";
 
   return (
     <section className="bg-[var(--home-paper)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
@@ -97,44 +97,56 @@ export function AuthorSpotlightSection({ product }: { product: Product }) {
             <h2 className="mt-2 text-[40px] font-bold leading-[1.2] text-[var(--home-green)]">
               {profile.name}
             </h2>
-            <p className="mt-4 max-w-[760px] text-[16px] leading-[1.5] text-[var(--home-muted)] lg:text-[18px]">
-              {profile.bio}
-            </p>
-            <dl className="mt-8 grid gap-6 sm:grid-cols-3">
-              <div>
-                <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
-                  {profile.books}
-                </dd>
-                <dt className="mt-2 text-[12px] uppercase tracking-[0.55px] text-[var(--home-muted)]">
-                  Published Books
-                </dt>
-              </div>
-              <div>
-                <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
-                  {profile.rating}
-                </dd>
-                <dt className="mt-2 text-[12px] uppercase tracking-[0.55px] text-[var(--home-muted)]">
-                  Average Rating
-                </dt>
-              </div>
-              <div>
-                <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
-                  {profile.readers}
-                </dd>
-                <dt className="mt-2 text-[12px] uppercase tracking-[0.55px] text-[var(--home-muted)]">
-                  Readers
-                </dt>
-              </div>
-            </dl>
+            {profile.bio ? (
+              <p className="mt-4 max-w-[760px] text-[16px] leading-[1.5] text-[var(--home-muted)] lg:text-[18px]">
+                {profile.bio}
+              </p>
+            ) : null}
+            {hasRealData ? (
+              <dl className="mt-8 grid gap-6 sm:grid-cols-3">
+                {profile.books !== "0" ? (
+                  <div>
+                    <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
+                      {profile.books}
+                    </dd>
+                    <dt className="mt-2 text-[12px] uppercase tracking-[0.55px] text-[var(--home-muted)]">
+                      Published Books
+                    </dt>
+                  </div>
+                ) : null}
+                {profile.rating !== "0.0" ? (
+                  <div>
+                    <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
+                      {profile.rating}
+                    </dd>
+                    <dt className="mt-2 text-[12px] uppercase tracking-[0.55px] text-[var(--home-muted)]">
+                      Average Rating
+                    </dt>
+                  </div>
+                ) : null}
+                {profile.readers !== "0" ? (
+                  <div>
+                    <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
+                      {profile.readers}
+                    </dd>
+                    <dt className="mt-2 text-[12px] uppercase tracking-[0.55px] text-[var(--home-muted)]">
+                      Readers
+                    </dt>
+                  </div>
+                ) : null}
+              </dl>
+            ) : null}
           </div>
-          <div className="flex lg:justify-end">
-            <Link
-              href={`/authors/${getAuthorSlug(profile.name)}`}
-              className="inline-flex h-[58px] items-center justify-center bg-[var(--home-gold)] px-8 text-[14px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)] [font-family:var(--font-display)]"
-            >
-              View Author Profile
-            </Link>
-          </div>
+          {profile.slug ? (
+            <div className="flex lg:justify-end">
+              <Link
+                href={`/authors/${profile.slug}`}
+                className="inline-flex h-[58px] items-center justify-center bg-[var(--home-gold)] px-8 text-[14px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)] [font-family:var(--font-display)]"
+              >
+                View Author Profile
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -142,13 +154,7 @@ export function AuthorSpotlightSection({ product }: { product: Product }) {
 }
 
 export function ReviewsSection({ product }: { product: Product }) {
-  const distribution = [
-    ["5 Star", 105],
-    ["4 Star", 12],
-    ["3 Star", 5],
-    ["2 Star", 2],
-    ["1 Star", 0],
-  ] as const;
+  const hasReviews = product.reviews.length > 0;
 
   return (
     <section className="bg-[var(--home-surface)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
@@ -160,37 +166,23 @@ export function ReviewsSection({ product }: { product: Product }) {
         <div className="mt-12 grid gap-8 lg:grid-cols-[360px_1fr]">
           <div className="border border-[var(--home-border)] bg-white p-8 text-center">
             <p className="text-[56px] font-bold leading-none text-[var(--home-green)]">
-              {product.rating.toFixed(1)}
+              {hasReviews ? product.rating.toFixed(1) : "—"}
             </p>
-            <div className="mt-4 flex justify-center gap-1 text-[var(--home-gold)]">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Star
-                  key={index}
-                  className="size-4 fill-transparent stroke-current"
-                />
-              ))}
-            </div>
+            {hasReviews ? (
+              <div className="mt-4 flex justify-center gap-1 text-[var(--home-gold)]">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Star
+                    key={index}
+                    className={`size-4 ${index < Math.round(product.rating) ? "fill-current stroke-current" : "fill-transparent stroke-current"}`}
+                  />
+                ))}
+              </div>
+            ) : null}
             <p className="mt-4 text-[16px] text-[var(--home-muted)]">
-              Based on {product.reviewCount} Reviews
+              {hasReviews
+                ? `Based on ${product.reviewCount} Reviews`
+                : "No reviews yet"}
             </p>
-
-            <div className="mt-8 space-y-3 text-left">
-              {distribution.map(([label, value]) => (
-                <div
-                  key={label}
-                  className="grid grid-cols-[48px_1fr_32px] items-center gap-3 text-[12px] text-[var(--home-muted)]"
-                >
-                  <span>{label}</span>
-                  <div className="h-1.5 bg-[var(--home-paper)]">
-                    <div
-                      className="h-full bg-[var(--home-gold)]"
-                      style={{ width: `${(value / 105) * 100}%` }}
-                    />
-                  </div>
-                  <span>{value}</span>
-                </div>
-              ))}
-            </div>
 
             <button className="mt-8 inline-flex h-[46px] w-full items-center justify-center bg-[var(--home-gold)] px-6 text-[12px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)] [font-family:var(--font-display)]">
               Write A Review
@@ -222,7 +214,7 @@ export function ReviewsSection({ product }: { product: Product }) {
                       {Array.from({ length: 5 }).map((_, starIndex) => (
                         <Star
                           key={starIndex}
-                          className="size-3.5 fill-transparent stroke-current"
+                          className={`size-3.5 ${starIndex < review.rating ? "fill-current stroke-current" : "fill-transparent stroke-current"}`}
                         />
                       ))}
                     </div>
@@ -240,9 +232,11 @@ export function ReviewsSection({ product }: { product: Product }) {
               </article>
             ))}
 
-            <button className="inline-flex h-[46px] items-center justify-center border border-[var(--home-gold)] px-6 text-[12px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)]">
-              Load More Reviews
-            </button>
+            {!hasReviews ? (
+              <p className="border border-dashed border-[var(--home-border)] bg-white p-6 text-center text-[var(--home-muted)]">
+                No reviews have been published for this book yet.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
@@ -250,7 +244,9 @@ export function ReviewsSection({ product }: { product: Product }) {
   );
 }
 
-export function RecommendationsSection() {
+export function RecommendationsSection({ products }: { products?: Product[] }) {
+  const recommendations = products ?? [];
+
   return (
     <section className="bg-[var(--home-paper)] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
       <div className="mx-auto max-w-[1440px]">
@@ -259,7 +255,7 @@ export function RecommendationsSection() {
             You May Also Like
           </h2>
           <Link
-            href="/categories"
+            href="/categories?view=shop"
             className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-gold)] px-8 text-[14px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)] sm:w-[151px]"
           >
             View All
@@ -267,12 +263,12 @@ export function RecommendationsSection() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {recommendedProducts.map((product) => (
+          {recommendations.map((product) => (
             <article
               key={product.slug}
               className="border border-[var(--home-border)] bg-white p-4"
             >
-              <Link href={`/products/${product.slug}`} className="group block">
+              <Link href={`/book/${product.slug}`} className="group block">
                 <Image
                   src={product.cover}
                   alt={product.title}
@@ -291,7 +287,7 @@ export function RecommendationsSection() {
                   ))}
                 </div>
                 <Link
-                  href={`/products/${product.slug}`}
+                  href={`/book/${product.slug}`}
                   className="block text-[24px] leading-[1.2] text-[var(--home-green-deep)] transition hover:text-[var(--home-green)]"
                 >
                   {product.title}
@@ -303,7 +299,7 @@ export function RecommendationsSection() {
                   {product.price}
                 </p>
                 <Link
-                  href={`/products/${product.slug}`}
+                  href={`/book/${product.slug}`}
                   className="inline-flex h-[46px] w-full items-center justify-center bg-[var(--home-gold)] px-6 text-[12px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)] [font-family:var(--font-display)]"
                 >
                   View Details
@@ -311,6 +307,11 @@ export function RecommendationsSection() {
               </div>
             </article>
           ))}
+          {!recommendations.length ? (
+            <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+              No other books by this author are available yet.
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

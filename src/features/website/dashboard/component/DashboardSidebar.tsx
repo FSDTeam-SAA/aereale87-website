@@ -1,10 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { LogOut } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
-import { dashboardNavItems, dashboardUser } from "../api/dashboard.data";
+import { dashboardNavItems } from "../api/dashboard.data";
 
 export function DashboardSidebar({ activeHref }: { activeHref: string }) {
+  const { data: session } = useSession();
+  const name = session?.user?.name ?? "Author";
+  const avatar = session?.user?.image ?? "/home/reviewer-1.png";
+
   return (
     <aside className="flex bg-[#6f7f70] text-white lg:fixed lg:inset-y-0 lg:left-0 lg:w-[220px] lg:flex-col">
       <div className="flex w-full items-center gap-4 px-4 py-4 lg:block lg:px-0 lg:py-7">
@@ -45,21 +52,20 @@ export function DashboardSidebar({ activeHref }: { activeHref: string }) {
       <div className="hidden px-4 pb-5 lg:mt-auto lg:block">
         <div className="mb-5 flex items-center gap-3">
           <Image
-            src={dashboardUser.avatar}
-            alt={dashboardUser.name}
+            src={avatar}
+            alt={name}
             width={42}
             height={42}
             className="size-10 rounded-full object-cover"
           />
           <div>
-            <p className="text-[14px] font-bold leading-tight">
-              {dashboardUser.name}
-            </p>
-            <p className="text-[12px] text-white/80">{dashboardUser.role}</p>
+            <p className="text-[14px] font-bold leading-tight">{name}</p>
+            <p className="text-[12px] text-white/80">Author</p>
           </div>
         </div>
         <button
           type="button"
+          onClick={() => signOut({ callbackUrl: "/" })}
           className="flex h-11 w-full items-center justify-center gap-2 border border-red-500 text-[14px] font-bold text-red-500 transition hover:bg-red-500 hover:text-white"
         >
           <LogOut className="size-4" />

@@ -1,31 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import {
-  categoryFilterCounts,
-  categoryFilters,
-  categoryGridProducts,
-  featuredCategoryTiles,
-  formatFilters,
-} from "@/data/catalog";
+import type { CategoryTile } from "@/data/catalog";
 import {
   AuthorCard,
   FeaturedBanner,
   HomeFooter,
   NewsletterSignup,
 } from "@/features/website/homepage/component";
-import {
-  authors,
-  footerColumns,
-} from "@/features/website/homepage/api/homepage.data";
+import { footerColumns } from "@/features/website/homepage/api/homepage.data";
 import { SiteHeader } from "@/components/shared/site/SiteHeader";
 import { CategoryCard } from "./CategoryCard";
 import { CategoryProductCard } from "./CategoryProductCard";
+import {
+  fetchBookCategories,
+  fetchCatalogBooks,
+  fetchFoundingAuthors,
+  mapCatalogBookToProduct,
+} from "../api/catalog.api";
 
 const pageSize = 12;
+const allCategories = "All Categories";
+const allAuthors = "All Authors";
 
 export function CategoryPage() {
   const searchParams = useSearchParams();
@@ -36,66 +37,125 @@ export function CategoryPage() {
   const activeNavHref =
     view === "shop" ? "/categories?view=shop" : "/categories?view=categories";
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedFormats, setSelectedFormats] = useState<string[] | null>(null);
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(100);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    queryCategory || allCategories,
+  );
+  const [selectedAuthor, setSelectedAuthor] = useState<string>(allAuthors);
+  const [selectedFormats, setSelectedFormats] = useState<string[]>(
+    queryFormat ? [queryFormat] : [],
+  );
+  const [maxPrice, setMaxPrice] = useState(0);
   const [page, setPage] = useState(1);
+  const maxPriceTouchedRef = useRef(false);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
 
-  const defaultCategory = useMemo(
-    () =>
-      queryCategory && categoryFilters.includes(queryCategory)
-        ? queryCategory
-        : "All Categories",
-    [queryCategory],
+  const categoriesQuery = useQuery({
+    queryKey: ["book-categories"],
+    queryFn: fetchBookCategories,
+  });
+  const booksQuery = useQuery({
+    queryKey: ["approved-books"],
+    queryFn: () => fetchCatalogBooks({ limit: 100 }),
+  });
+  const authorsQuery = useQuery({
+    queryKey: ["founding-authors"],
+    queryFn: fetchFoundingAuthors,
+  });
+
+  const products = useMemo(
+    () => (booksQuery.data?.books ?? []).map(mapCatalogBookToProduct),
+    [booksQuery.data],
   );
 
-  const defaultFormats = useMemo(
-    () =>
-      queryFormat && formatFilters.includes(queryFormat) ? [queryFormat] : [],
-    [queryFormat],
+  const categoryFilters = useMemo(
+    () => [
+      allCategories,
+      ...(categoriesQuery.data?.categories.map((category) => category.name) ??
+        []),
+    ],
+    [categoriesQuery.data],
   );
 
-  const activeCategory = selectedCategory ?? defaultCategory;
-  const activeFormats = selectedFormats ?? defaultFormats;
+  const authorFilters = useMemo(
+    () => [
+      { id: allAuthors, name: allAuthors },
+      ...(authorsQuery.data?.authors ?? []).map((author) => {
+        const name = author.profile
+          ? `${author.profile.firstName || ""} ${author.profile.lastName || ""}`.trim() ||
+            author.username
+          : author.username;
+        return { id: author.id, name };
+      }),
+    ],
+    [authorsQuery.data],
+  );
 
-  const expandedProducts = useMemo(() => {
-    return Array.from({ length: 12 }).flatMap((_, index) =>
-      categoryGridProducts.map((product, productIndex) => ({
-        ...product,
-        slug: `${product.slug}-${index + 1}-${productIndex + 1}`,
-      })),
+  const formatFilters = useMemo(
+    () => [
+      ...new Set(
+        products.flatMap((product) =>
+          product.formats.map((format) => format.label),
+        ),
+      ),
+    ],
+    [products],
+  );
+
+  const dynamicMaxPrice = useMemo(() => {
+    const prices = products.map((product) =>
+      Number(product.price.replace(/[^0-9.]/g, "")),
     );
-  }, []);
+    return prices.length ? Math.ceil(Math.max(...prices)) : 0;
+  }, [products]);
+
+  const categoryTiles: CategoryTile[] = useMemo(() => {
+    const icons: CategoryTile["icon"][] = ["spark", "star", "tablet"];
+    return (categoriesQuery.data?.categories ?? []).map((cat, index) => ({
+      title: cat.name,
+      subtitle: `${cat.count} ${cat.count === 1 ? "book" : "books"}`,
+      href: `/categories?view=shop&category=${encodeURIComponent(cat.name)}`,
+      icon: icons[index % icons.length],
+    }));
+  }, [categoriesQuery.data]);
+
+  useEffect(() => {
+    if (!maxPriceTouchedRef.current && dynamicMaxPrice) {
+      setMaxPrice(dynamicMaxPrice);
+    }
+  }, [dynamicMaxPrice]);
 
   const filteredProducts = useMemo(() => {
-    return expandedProducts.filter((product) => {
+    return products.filter((product) => {
       const numericPrice = Number(product.price.replace(/[^0-9.]/g, ""));
 
       const categoryMatch =
-        activeCategory === "All Categories" ||
-        product.filterCategory === activeCategory;
+        selectedCategory === allCategories ||
+        product.filterCategory === selectedCategory;
+
+      const authorMatch =
+        selectedAuthor === allAuthors ||
+        booksQuery.data?.books.find((book) => book.id === product.slug)?.author
+          ?.id === selectedAuthor;
 
       const formatMatch =
-        activeFormats.length === 0 ||
-        activeFormats.some((format) =>
+        selectedFormats.length === 0 ||
+        selectedFormats.some((format) =>
           product.formats.some(
             (productFormat) => productFormat.label === format,
           ),
         );
 
-      const ratingMatch =
-        selectedRating === 0 || product.rating >= selectedRating;
-      const priceMatch = numericPrice <= maxPrice;
+      const priceMatch = maxPrice === 0 || numericPrice <= maxPrice;
 
-      return categoryMatch && formatMatch && ratingMatch && priceMatch;
+      return categoryMatch && authorMatch && formatMatch && priceMatch;
     });
   }, [
-    activeCategory,
-    activeFormats,
-    expandedProducts,
+    booksQuery.data,
     maxPrice,
-    selectedRating,
+    products,
+    selectedAuthor,
+    selectedCategory,
+    selectedFormats,
   ]);
 
   const pageCount = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
@@ -129,10 +189,76 @@ export function CategoryPage() {
               </p>
             </div>
 
+            <div className="relative mx-auto mt-10 max-w-[1440px]">
+              <button
+                type="button"
+                aria-label="Scroll categories left"
+                onClick={() =>
+                  categoryScrollRef.current?.scrollBy({
+                    left: -240,
+                    behavior: "smooth",
+                  })
+                }
+                className="absolute left-0 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center border border-[var(--home-border)] bg-white/90 shadow-sm transition hover:bg-[var(--home-paper)]"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+              <div
+                ref={categoryScrollRef}
+                className="no-scrollbar flex gap-3 overflow-x-auto scroll-smooth px-10 py-2"
+              >
+                {(categoriesQuery.data?.categories ?? []).map((cat) => (
+                  <Link
+                    key={cat.name}
+                    href={`/categories?view=shop&category=${encodeURIComponent(cat.name)}`}
+                    className="shrink-0 rounded-full border border-[var(--home-border)] bg-white px-5 py-2.5 text-[13px] font-medium text-[var(--home-green-deep)] transition hover:border-[var(--home-gold)] hover:bg-[var(--home-surface)] hover:text-[var(--home-green-deep)]"
+                  >
+                    {cat.name}
+                    <span className="ml-2 text-[11px] text-[var(--home-muted)]">
+                      ({cat.count})
+                    </span>
+                  </Link>
+                ))}
+                {categoriesQuery.isLoading ? (
+                  <>
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className="h-10 w-28 shrink-0 animate-pulse rounded-full border border-[var(--home-border)] bg-gray-100"
+                      />
+                    ))}
+                  </>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                aria-label="Scroll categories right"
+                onClick={() =>
+                  categoryScrollRef.current?.scrollBy({
+                    left: 240,
+                    behavior: "smooth",
+                  })
+                }
+                className="absolute right-0 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center border border-[var(--home-border)] bg-white/90 shadow-sm transition hover:bg-[var(--home-paper)]"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+            </div>
+
             <div className="mx-auto mt-12 grid max-w-[1440px] gap-8 lg:grid-cols-3">
-              {featuredCategoryTiles.map((tile) => (
+              {categoryTiles.map((tile) => (
                 <CategoryCard key={tile.title} tile={tile} />
               ))}
+              {categoriesQuery.isLoading ? (
+                <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+                  Loading categories...
+                </p>
+              ) : null}
+              {!categoriesQuery.isLoading && !categoryTiles.length ? (
+                <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+                  No categories available.
+                </p>
+              ) : null}
             </div>
           </div>
         </section>
@@ -161,7 +287,7 @@ export function CategoryPage() {
                         <input
                           type="radio"
                           name="category"
-                          checked={activeCategory === category}
+                          checked={selectedCategory === category}
                           onChange={() => {
                             setSelectedCategory(category);
                             setPage(1);
@@ -171,10 +297,38 @@ export function CategoryPage() {
                         {category}
                       </span>
                       <span>
-                        {categoryFilterCounts[
-                          category as keyof typeof categoryFilterCounts
-                        ] ?? ""}
+                        {category === allCategories
+                          ? (categoriesQuery.data?.total ?? products.length)
+                          : (categoriesQuery.data?.categories.find(
+                              (item) => item.name === category,
+                            )?.count ?? "")}
                       </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border border-[var(--home-border)] bg-white p-4">
+                <h2 className="text-[18px] font-semibold text-[var(--home-green-deep)]">
+                  Authors
+                </h2>
+                <div className="mt-4 space-y-3">
+                  {authorFilters.map((author) => (
+                    <label
+                      key={author.id}
+                      className="flex cursor-pointer items-center gap-3 text-[14px] text-[var(--home-muted)]"
+                    >
+                      <input
+                        type="radio"
+                        name="author"
+                        checked={selectedAuthor === author.id}
+                        onChange={() => {
+                          setSelectedAuthor(author.id);
+                          setPage(1);
+                        }}
+                        className="size-3 accent-[var(--home-green)]"
+                      />
+                      {author.name}
                     </label>
                   ))}
                 </div>
@@ -187,9 +341,10 @@ export function CategoryPage() {
                 <input
                   type="range"
                   min={0}
-                  max={100}
+                  max={dynamicMaxPrice}
                   value={maxPrice}
                   onChange={(event) => {
+                    maxPriceTouchedRef.current = true;
                     setMaxPrice(Number(event.target.value));
                     setPage(1);
                   }}
@@ -213,14 +368,12 @@ export function CategoryPage() {
                     >
                       <input
                         type="checkbox"
-                        checked={activeFormats.includes(format)}
+                        checked={selectedFormats.includes(format)}
                         onChange={() => {
                           setSelectedFormats((current) =>
-                            (current ?? activeFormats).includes(format)
-                              ? (current ?? defaultFormats).filter(
-                                  (item) => item !== format,
-                                )
-                              : [...(current ?? defaultFormats), format],
+                            current.includes(format)
+                              ? current.filter((item) => item !== format)
+                              : [...current, format],
                           );
                           setPage(1);
                         }}
@@ -229,40 +382,11 @@ export function CategoryPage() {
                       {format}
                     </label>
                   ))}
-                </div>
-              </div>
-
-              <div className="border border-[var(--home-border)] bg-white p-4">
-                <h2 className="text-[18px] font-semibold text-[var(--home-green-deep)]">
-                  Rating
-                </h2>
-                <div className="mt-4 space-y-3">
-                  {[4, 0].map((rating) => (
-                    <label
-                      key={rating}
-                      className="flex cursor-pointer items-center gap-3 text-[14px] text-[var(--home-muted)]"
-                    >
-                      <input
-                        type="radio"
-                        name="rating"
-                        checked={selectedRating === rating}
-                        onChange={() => {
-                          setSelectedRating(rating);
-                          setPage(1);
-                        }}
-                        className="size-3 accent-[var(--home-green)]"
-                      />
-                      <span className="flex items-center gap-1 text-[var(--home-gold)]">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <Star
-                            key={index}
-                            className="size-3 fill-transparent stroke-current"
-                          />
-                        ))}
-                      </span>
-                      <span>{rating === 0 ? "& Up" : "& Up"}</span>
-                    </label>
-                  ))}
+                  {!formatFilters.length ? (
+                    <p className="text-[14px] text-[var(--home-muted)]">
+                      No formats available.
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -273,6 +397,16 @@ export function CategoryPage() {
               {visibleProducts.map((product) => (
                 <CategoryProductCard key={product.slug} product={product} />
               ))}
+              {booksQuery.isLoading ? (
+                <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+                  Loading books...
+                </p>
+              ) : null}
+              {!booksQuery.isLoading && !visibleProducts.length ? (
+                <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+                  No approved books match these filters.
+                </p>
+              ) : null}
             </div>
 
             <div className="mt-12 flex items-center justify-center gap-2 text-[14px] text-[var(--home-muted)]">
@@ -330,8 +464,22 @@ export function CategoryPage() {
           <div className="mx-auto mt-5 h-1 w-12 bg-[var(--home-gold)]" />
         </div>
         <div className="mx-auto mt-12 grid max-w-[1440px] gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {authors.map((author, index) => (
-            <AuthorCard key={`${author.name}-${index}`} author={author} />
+          {(authorsQuery.data?.authors ?? []).map((author) => (
+            <AuthorCard
+              key={author.id}
+              author={{
+                href: `/authors/${author.id}`,
+                name: author.profile
+                  ? `${author.profile.firstName || ""} ${author.profile.lastName || ""}`.trim() ||
+                    author.username
+                  : author.username,
+                badge: "Founding Author",
+                books: String(author.bookCount),
+                rating: "0.0",
+                readers: "0",
+                avatar: author.profile?.avatarUrl || "/placeholder-author.png",
+              }}
+            />
           ))}
         </div>
       </section>

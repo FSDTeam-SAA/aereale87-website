@@ -37,7 +37,10 @@ export function HomeHero() {
             <HomeCta href="#shop" invert className="min-w-[235px]">
               Shop Collection
             </HomeCta>
-            <HomeCta href="#authors" className="min-w-[235px] text-white">
+            <HomeCta
+              href="/auth/register?role=author"
+              className="min-w-[235px] text-white"
+            >
               Become An Author
             </HomeCta>
           </div>

@@ -1,8 +1,34 @@
+"use client";
+
 import { Mail } from "lucide-react";
+import { useState } from "react";
+import { api } from "../../../../lib/api";
+import { toast } from "sonner";
 
 import { HomeSection } from "./primitives";
 
 export function NewsletterSignup() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setLoading(true);
+    try {
+      await api.post("/newsletter/subscribe", { email });
+      toast.success("Successfully subscribed to the newsletter!");
+      setEmail("");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Failed to subscribe";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <HomeSection
       id="newsletter"
@@ -21,6 +47,7 @@ export function NewsletterSignup() {
             special offers directly to your inbox.
           </p>
           <form
+            onSubmit={handleSubmit}
             className="mt-10 flex w-full flex-col gap-4 sm:flex-row"
             aria-label="Newsletter signup"
           >
@@ -30,14 +57,18 @@ export function NewsletterSignup() {
             <input
               id="newsletter-email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
-              className="h-[58px] flex-1 border border-[var(--home-border)] bg-[var(--home-surface)] px-6 text-[16px] text-[var(--home-green-deep)] outline-none transition placeholder:text-[var(--home-muted)] focus:border-[var(--home-gold)]"
+              disabled={loading}
+              className="h-[58px] flex-1 border border-[var(--home-border)] bg-[var(--home-surface)] px-6 text-[16px] text-[var(--home-green-deep)] outline-none transition placeholder:text-[var(--home-muted)] focus:border-[var(--home-gold)] disabled:opacity-50"
             />
             <button
-              type="button"
-              className="inline-flex h-[58px] min-w-[218px] items-center justify-center border border-[var(--home-gold)] bg-[var(--home-gold)] px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-transparent hover:text-[var(--home-gold)] [font-family:var(--font-display)]"
+              type="submit"
+              disabled={loading}
+              className="inline-flex h-[58px] min-w-[218px] items-center justify-center border border-[var(--home-gold)] bg-[var(--home-gold)] px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-transparent hover:text-[var(--home-gold)] [font-family:var(--font-display)] disabled:opacity-50"
             >
-              Subscribe Now
+              {loading ? "Subscribing..." : "Subscribe Now"}
             </button>
           </form>
           <p className="mt-4 text-[16px] leading-[1.2] text-[var(--home-muted)]">

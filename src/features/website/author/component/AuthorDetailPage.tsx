@@ -12,7 +12,7 @@ import { AuthorHeroSection } from "./AuthorHeroSection";
 export function AuthorDetailPage({ author }: { author: AuthorPageData }) {
   return (
     <main className="bg-[var(--home-surface)] text-[var(--home-green-deep)]">
-      <SiteHeader ctaLabel="Account" ctaHref="/categories" />
+      <SiteHeader activeHref="/authors" />
       <AuthorHeroSection author={author} />
       <AuthorBookShelfSection
         shelf={author.shelves[0]}

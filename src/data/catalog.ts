@@ -38,6 +38,7 @@ export type Product = {
   aboutBody: string;
   specs: ProductSpec[];
   authorProfile: {
+    slug?: string;
     name: string;
     role: string;
     bio: string;

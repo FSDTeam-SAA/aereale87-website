@@ -9,6 +9,8 @@ export type StatItem = {
 };
 
 export type BookItem = {
+  id?: string;
+  formatId?: string;
   href: string;
   image: string;
   imageAlt: string;
@@ -16,6 +18,8 @@ export type BookItem = {
   author: string;
   price: string;
   reviews: string;
+  category?: string;
+  formats?: string[];
   badge?: string;
 };
 
@@ -27,6 +31,7 @@ export type TestimonialItem = {
 };
 
 export type AuthorItem = {
+  href?: string;
   name: string;
   badge: string;
   books: string;

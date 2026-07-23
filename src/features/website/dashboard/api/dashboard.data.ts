@@ -1,7 +1,5 @@
 import { Bell, BookOpen, Clock3, Grid3X3, Settings } from "lucide-react";
 
-import { products } from "@/data/catalog";
-
 import type {
   DashboardNavItem,
   DashboardStat,
@@ -24,50 +22,33 @@ export const dashboardNavItems: DashboardNavItem[] = [
 export const dashboardStats: DashboardStat[] = [
   {
     label: "Total Books",
-    value: "48",
-    badge: "+3 new",
+    value: "0",
+    badge: "",
     tone: "blue",
     icon: Grid3X3,
   },
   {
     label: "Listening Time",
-    value: "127h",
-    badge: "This week",
+    value: "0h",
+    badge: "",
     tone: "orange",
     icon: Clock3,
   },
   {
     label: "Reading Books",
-    value: "127",
-    badge: "This week",
+    value: "0",
+    badge: "",
     tone: "orange",
     icon: BookOpen,
   },
 ];
 
-const librarySlugs = [
-  "create-your-own-business",
-  "still-single",
-  "the-silent-echo",
-  "make-your-happy",
-];
-
-export const libraryBooks: LibraryBook[] = librarySlugs.map((slug) => {
-  const product = products.find((item) => item.slug === slug)!;
-
-  return {
-    slug: product.slug,
-    title: "The Silent Echo",
-    author: "Evelyn Reed",
-    cover: product.cover,
-    rating: 4,
-  };
-});
+export const libraryBooks: LibraryBook[] = [];
 
 export const dashboardUser = {
-  name: "Demo Name",
-  role: "Super Admin",
-  avatar: "/home/reviewer-1.png",
+  name: "User",
+  role: "Member",
+  avatar: "/placeholder-author.png",
 };
 
 export const dashboardTopAction = {

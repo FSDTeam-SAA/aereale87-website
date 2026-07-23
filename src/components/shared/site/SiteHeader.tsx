@@ -1,40 +1,59 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown, Menu, Search, ShoppingBag } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Menu,
+  Search,
+  ShoppingBag,
+  User,
+} from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
 import { siteNavItems } from "@/data/catalog";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
 
-const navMenus: Record<string, { href: string; label: string }[]> = {
-  CATEGORIES: [
-    {
-      href: "/categories?view=shop&category=Leadership",
-      label: "Leadership",
-    },
-    {
-      href: "/categories?view=shop&category=Children%27s",
-      label: "Children's",
-    },
-    {
-      href: "/categories?view=shop&category=Faith%20%26%20Wisdom",
-      label: "Faith & Wisdom",
-    },
-    { href: "/categories?view=shop&category=Business", label: "Business" },
-  ],
-};
+interface BookCategory {
+  name: string;
+  count: number;
+}
+
+async function fetchCategories() {
+  const response = await api.get<{ categories: BookCategory[]; total: number }>(
+    "/books/categories",
+  );
+  return response.data.categories;
+}
 
 export function SiteHeader({
-  ctaLabel = "Account",
-  ctaHref = "/auth/login",
   activeHref = "/categories?view=categories",
 }: {
-  ctaLabel?: string;
-  ctaHref?: string;
   activeHref?: string;
 }) {
+  const { data: session, status } = useSession();
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  const isAuthor = role === "AUTHOR";
+  const isLoggedIn = status === "authenticated";
+  const { data: categories } = useQuery({
+    queryKey: ["book-categories"],
+    queryFn: fetchCategories,
+  });
+
+  const navMenus: Record<string, { href: string; label: string }[]> = {
+    CATEGORIES:
+      categories?.map((cat) => ({
+        href: `/categories?view=shop&category=${encodeURIComponent(cat.name)}`,
+        label: cat.name,
+      })) ?? [],
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-[rgba(232,224,204,0.7)] bg-[var(--home-surface)]/95 backdrop-blur">
-      <div className="mx-auto container flex  flex-col gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
+      <div className="mx-auto container flex flex-col gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="shrink-0">
             <Image
@@ -114,21 +133,72 @@ export function SiteHeader({
           </button>
           <Link
             href="/cart"
-            aria-label="Shopping cart, 3 items"
+            aria-label="Shopping cart"
             className="relative text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
           >
             <ShoppingBag className="size-5" />
-            <span className="absolute -right-2 -top-2 inline-flex size-4 items-center justify-center rounded-full bg-[var(--home-gold)] text-[10px] font-semibold text-[var(--home-ink)]">
-              3
-            </span>
           </Link>
-          <Link
-            href={ctaHref}
-            className="inline-flex h-10 items-center gap-2 border border-[var(--home-gold)] px-4 text-[12px] font-bold uppercase tracking-[0.52px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)] lg:h-11"
-          >
-            {ctaLabel}
-            <ChevronDown className="size-3.5" />
-          </Link>
+
+          {/* ── Account CTA ── */}
+          {!isLoggedIn ? (
+            /* Guest → Sign In button */
+            <Link
+              href="/auth/login"
+              className="inline-flex h-10 items-center gap-2 border border-[var(--home-gold)] px-4 text-[12px] font-bold uppercase tracking-[0.52px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)] lg:h-11"
+            >
+              Sign In
+              <ChevronDown className="size-3.5" />
+            </Link>
+          ) : (
+            /* Logged in → dropdown */
+            <div className="group relative">
+              <button
+                type="button"
+                className="inline-flex h-10 items-center gap-2 border border-[var(--home-gold)] px-4 text-[12px] font-bold uppercase tracking-[0.52px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)] lg:h-11"
+              >
+                {isAuthor ? "My Dashboard" : "My Account"}
+                <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
+              </button>
+
+              <div className="invisible absolute right-0 top-full z-50 w-[200px] pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <div className="border border-[var(--home-border)] bg-white shadow-[0_18px_45px_rgba(27,46,36,0.12)]">
+                  {/* Author-specific links */}
+                  {isAuthor && (
+                    <>
+                      <a
+                        href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}/author-dashboard`}
+                        className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                      >
+                        <User className="size-4" />
+                        My Dashboard
+                      </a>
+                    </>
+                  )}
+
+                  {/* Regular user links */}
+                  {!isAuthor && (
+                    <Link
+                      href="/settings"
+                      className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                    >
+                      <User className="size-4" />
+                      My Account
+                    </Link>
+                  )}
+
+                  <div className="mx-4 border-t border-[var(--home-border)]" />
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-[13px] font-medium text-red-600 transition hover:bg-red-50"
+                  >
+                    <LogOut className="size-4" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -2,43 +2,8 @@
 
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      image: string;
-      role: string;
-    };
-    accessToken: string;
-    refreshToken: string;
-  }
-
-  interface User {
-    id: string;
-    name: string;
-    email: string;
-    image: string;
-    role: string;
-    token: string;
-    refreshToken: string;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    name: string;
-    email: string;
-    image: string;
-    role: string;
-    accessToken: string;
-    refreshToken: string;
-  }
-}
 
 import { refreshAccessToken } from "@/features/website/auth/api/refresh-token.api";
 
@@ -66,37 +31,38 @@ const handler = NextAuth({
           });
 
           const data = await res.json();
-          console.log("API Login Response:", JSON.stringify(data, null, 2));
-
           if (!res.ok) {
             throw new Error(data.message || "Login failed");
           }
 
           const user = data.data?.user;
-          const accessToken = data.data?.accessToken;
+          const tokens = data.data?.tokens;
 
-          console.log("User details:", user);
-          console.log("Token:", accessToken);
-
-          if (!user || !accessToken) {
+          if (!user || !tokens?.accessToken || !tokens?.refreshToken) {
             throw new Error("Invalid response from server");
           }
 
           // Return the object that NextAuth will use as 'user' in the jwt callback
           return {
             id: user._id || user.id, // Ensure we get the ID
-            name: user.name,
+            name: user.firstName
+              ? `${user.firstName} ${user.lastName || ""}`.trim()
+              : user.username,
             email: user.email,
-            image: user.profileImage, // Map profileImage to image
+            image: null,
             role: user.role,
-            token: accessToken, // We attach the token here as a property of the user
-            refreshToken: user.refreshToken,
+            token: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
           };
         } catch (error) {
           console.error("Authorize error:", error);
-          throw new Error("Invalid email or password");
+          throw error;
         }
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
   ],
 
@@ -105,6 +71,33 @@ const handler = NextAuth({
   },
 
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider !== "google") return true;
+      if (!account.id_token) return false;
+
+      const response = await fetch(`${baseUrl}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: account.id_token }),
+      });
+      if (!response.ok) return false;
+
+      const payload = await response.json();
+      const backendUser = payload.data?.user;
+      const tokens = payload.data?.tokens;
+      if (!backendUser || !tokens?.accessToken || !tokens?.refreshToken) {
+        return false;
+      }
+
+      user.id = backendUser.id;
+      user.name = backendUser.firstName || backendUser.username;
+      user.email = backendUser.email;
+      user.role = backendUser.role;
+      user.token = tokens.accessToken;
+      user.refreshToken = tokens.refreshToken;
+      return true;
+    },
+
     async jwt({ token, user, trigger, session }) {
       // Initial sign in
       if (user) {
@@ -117,7 +110,7 @@ const handler = NextAuth({
           role: user.role,
           accessToken: user.token,
           refreshToken: user.refreshToken,
-          accessTokenExpires: Date.now() + 60 * 60 * 1000, // Default 1 hour expiry
+          accessTokenExpires: Date.now() + 14 * 60 * 1000,
         };
       }
 
@@ -135,21 +128,19 @@ const handler = NextAuth({
       try {
         const refreshedTokens = await refreshAccessToken(token.refreshToken);
 
-        if (!refreshedTokens.status) {
-          throw refreshedTokens;
-        }
-
         return {
           ...token,
-          accessToken: refreshedTokens.data.accessToken,
-          accessTokenExpires: Date.now() + 60 * 60 * 1000, // Update expiration
-          refreshToken: refreshedTokens.data.refreshToken || token.refreshToken, // Fallback to old refresh token
+          accessToken: refreshedTokens.accessToken,
+          accessTokenExpires: Date.now() + 14 * 60 * 1000,
+          refreshToken: refreshedTokens.refreshToken || token.refreshToken,
+          error: undefined,
         };
       } catch (error) {
         console.error("Error refreshing access token", error);
         return {
           ...token,
           error: "RefreshAccessTokenError",
+          accessTokenExpires: Date.now() + 30 * 1000,
         };
       }
     },

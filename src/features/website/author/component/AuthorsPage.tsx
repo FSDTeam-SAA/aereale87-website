@@ -3,13 +3,11 @@ import {
   HomeFooter,
   NewsletterSignup,
 } from "@/features/website/homepage/component";
-import {
-  authors,
-  footerColumns,
-} from "@/features/website/homepage/api/homepage.data";
+import { footerColumns } from "@/features/website/homepage/api/homepage.data";
 import { SiteHeader } from "@/components/shared/site/SiteHeader";
+import type { AuthorItem } from "@/features/website/homepage/types/homepage.types";
 
-export function AuthorsPage() {
+export function AuthorsPage({ authors }: { authors: AuthorItem[] }) {
   return (
     <main className="bg-[var(--home-surface)] text-[var(--home-green-deep)]">
       <SiteHeader activeHref="/authors" />
@@ -35,6 +33,11 @@ export function AuthorsPage() {
             {authors.map((author, index) => (
               <AuthorCard key={`${author.name}-${index}`} author={author} />
             ))}
+            {!authors.length ? (
+              <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+                No founding authors are available yet.
+              </p>
+            ) : null}
           </div>
         </div>
       </section>

@@ -41,22 +41,26 @@ export function AuthorHeroSection({ author }: { author: AuthorPageData }) {
                 Published Books
               </dt>
             </div>
-            <div className="sm:border-x sm:border-[rgba(27,46,36,0.08)] sm:px-8">
-              <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
-                {author.rating}
-              </dd>
-              <dt className="mt-2 text-[12px] uppercase tracking-[2px] text-[var(--home-muted)]">
-                Average Rating
-              </dt>
-            </div>
-            <div>
-              <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
-                {author.readers}
-              </dd>
-              <dt className="mt-2 text-[12px] uppercase tracking-[2px] text-[var(--home-muted)]">
-                Readers
-              </dt>
-            </div>
+            {author.rating !== "0.0" ? (
+              <div className="sm:border-x sm:border-[rgba(27,46,36,0.08)] sm:px-8">
+                <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
+                  {author.rating}
+                </dd>
+                <dt className="mt-2 text-[12px] uppercase tracking-[2px] text-[var(--home-muted)]">
+                  Average Rating
+                </dt>
+              </div>
+            ) : null}
+            {author.readers !== "0" ? (
+              <div>
+                <dd className="text-[36px] font-bold leading-none text-[var(--home-green)]">
+                  {author.readers}
+                </dd>
+                <dt className="mt-2 text-[12px] uppercase tracking-[2px] text-[var(--home-muted)]">
+                  Readers
+                </dt>
+              </div>
+            ) : null}
           </dl>
         </div>
       </div>

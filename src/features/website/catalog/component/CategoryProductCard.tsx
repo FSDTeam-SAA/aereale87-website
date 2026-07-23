@@ -2,13 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 
+import { AddToCartButton } from "@/features/website/cart/component/AddToCartButton";
 import type { Product } from "@/data/catalog";
 
 export function CategoryProductCard({ product }: { product: Product }) {
   return (
     <article className="border border-[var(--home-border)] bg-white p-4 shadow-[0_6px_20px_rgba(27,46,36,0.04)]">
       <Link
-        href={`/products/${product.slug}`}
+        href={`/book/${product.slug}`}
         className="group relative mb-4 block overflow-hidden bg-[var(--home-paper)]"
       >
         <Image
@@ -38,7 +39,7 @@ export function CategoryProductCard({ product }: { product: Product }) {
         </div>
         <div>
           <Link
-            href={`/products/${product.slug}`}
+            href={`/book/${product.slug}`}
             className="line-clamp-2 text-[24px] leading-[1.2] text-[var(--home-green-deep)] transition hover:text-[var(--home-green)]"
           >
             {product.title}
@@ -50,12 +51,11 @@ export function CategoryProductCard({ product }: { product: Product }) {
         <p className="text-[24px] font-bold leading-[1.2] text-[var(--home-green)]">
           {product.price}
         </p>
-        <Link
-          href={`/products/${product.slug}`}
-          className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-[12px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)]"
-        >
-          Add To Cart
-        </Link>
+        <AddToCartButton
+          bookId={product.slug}
+          formatId={product.formats[0]?.id}
+          className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-[12px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
+        />
       </div>
     </article>
   );

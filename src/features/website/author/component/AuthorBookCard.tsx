@@ -8,7 +8,7 @@ export function AuthorBookCard({ product }: { product: Product }) {
   return (
     <article className="border border-[var(--home-border)] bg-white p-3 shadow-[0_6px_24px_rgba(27,46,36,0.05)]">
       <Link
-        href={`/products/${product.slug}`}
+        href={`/book/${product.slug}`}
         className="group block overflow-hidden bg-[var(--home-paper)]"
       >
         <Image
@@ -31,7 +31,7 @@ export function AuthorBookCard({ product }: { product: Product }) {
         </div>
 
         <Link
-          href={`/products/${product.slug}`}
+          href={`/book/${product.slug}`}
           className="mt-2 block text-[20px] font-semibold leading-[1.2] text-[var(--home-green-deep)] transition hover:text-[var(--home-green)]"
         >
           {product.title}
@@ -46,7 +46,7 @@ export function AuthorBookCard({ product }: { product: Product }) {
         </p>
 
         <Link
-          href={`/products/${product.slug}`}
+          href={`/book/${product.slug}`}
           className="mt-4 inline-flex h-[42px] w-full items-center justify-center bg-[var(--home-gold)] px-4 text-[11px] font-bold uppercase tracking-[0.6px] text-white transition hover:bg-[var(--home-green)] [font-family:var(--font-display)]"
         >
           View Details

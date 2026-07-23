@@ -42,7 +42,11 @@ export function FoundingProgram({ benefits }: { benefits: string[] }) {
               );
             })}
           </ul>
-          <HomeCta href="#authors" invert className="w-full sm:w-[264px]">
+          <HomeCta
+            href="/auth/register?role=author"
+            invert
+            className="w-full sm:w-[264px]"
+          >
             Apply As An Author
           </HomeCta>
         </div>

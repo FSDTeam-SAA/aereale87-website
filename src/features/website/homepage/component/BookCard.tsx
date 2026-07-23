@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 
+import { AddToCartButton } from "@/features/website/cart/component/AddToCartButton";
 import type { BookItem } from "../types/homepage.types";
-import { HomeCta } from "./primitives";
 
 export function BookCard({ book }: { book: BookItem }) {
   return (
@@ -49,18 +49,33 @@ export function BookCard({ book }: { book: BookItem }) {
           <p className="text-[16px] leading-[1.2] text-[var(--home-muted)]">
             {book.author}
           </p>
+          {book.category ? (
+            <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--home-gold)]">
+              {book.category}
+            </p>
+          ) : null}
+          {book.formats?.length ? (
+            <div className="flex flex-wrap gap-1.5">
+              {book.formats.map((format) => (
+                <span
+                  key={format}
+                  className="border border-[var(--home-border)] px-2 py-1 text-[11px] text-[var(--home-muted)]"
+                >
+                  {format}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
         <div className="mt-auto space-y-4">
           <p className="text-[24px] font-bold leading-[1.2] text-[var(--home-green)]">
             {book.price}
           </p>
-          <HomeCta
-            href={book.href}
-            className="flex w-full text-center text-[var(--home-gold)] hover:text-white"
-            invert={false}
-          >
-            Add To Cart
-          </HomeCta>
+          <AddToCartButton
+            bookId={book.id || ""}
+            formatId={book.formatId}
+            className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-center text-[14px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition duration-300 hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
+          />
         </div>
       </div>
     </article>

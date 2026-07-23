@@ -7,19 +7,26 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const userRole = (token?.role as string)?.toUpperCase();
-  const isAdmin = userRole === "ADMIN";
+  const isAdmin = userRole === "ADMIN" || userRole === "SUPERADMIN";
+  const isAuthor = userRole === "AUTHOR";
   const isGuest = !token;
+  const isProtectedRoute =
+    pathname.startsWith("/my-books") || pathname.startsWith("/settings");
 
-  // Example: Block guests from /dashboard
-  if (isGuest && pathname.startsWith("/dashboard")) {
+  // Require a session for account pages.
+  if (isGuest && isProtectedRoute) {
     const callbackUrl = encodeURIComponent(pathname);
     return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${callbackUrl}`, request.url),
+      new URL(`/auth/login?callbackUrl=${callbackUrl}`, request.url),
     );
   }
 
-  // Example: Block non-admins from /dashboard
-  if (!isAdmin && pathname.startsWith("/dashboard")) {
+  // Only approved authors and administrators can manage books.
+  if (!isAuthor && !isAdmin && pathname.startsWith("/my-books")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  if (token && pathname.startsWith("/auth/login")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
