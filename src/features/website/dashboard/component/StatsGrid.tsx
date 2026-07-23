@@ -1,9 +1,14 @@
 import { dashboardStats } from "../api/dashboard.data";
+import type { DashboardStat } from "../types/dashboard.types";
 
-export function StatsGrid() {
+export function StatsGrid({
+  stats = dashboardStats,
+}: {
+  stats?: DashboardStat[];
+}) {
   return (
     <section className="grid gap-5 md:grid-cols-3">
-      {dashboardStats.map((stat) => {
+      {stats.map((stat) => {
         const Icon = stat.icon;
         const toneClass =
           stat.tone === "blue"

@@ -1,4 +1,5 @@
 export type SettingsProfile = {
+  id: string;
   name: string;
   email: string;
   badge: string;

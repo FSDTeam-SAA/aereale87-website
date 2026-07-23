@@ -1,7 +1,10 @@
-import { settingsProfile } from "../api/settings.data";
+import { useQuery } from "@tanstack/react-query";
+
+import { getSettingsProfile } from "../api/settings.api";
 
 export function useSettingsData() {
-  return {
-    profile: settingsProfile,
-  };
+  return useQuery({
+    queryKey: ["website-settings-profile"],
+    queryFn: getSettingsProfile,
+  });
 }

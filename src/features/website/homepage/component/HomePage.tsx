@@ -90,6 +90,29 @@ function BookStrip({ books }: { books: BookItem[] }) {
   );
 }
 
+function AuthorStrip({ authors }: { authors: AuthorItem[] }) {
+  if (!authors.length) {
+    return (
+      <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
+        No founding authors are available yet.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-12 flex snap-x gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 xl:overflow-visible xl:pb-0">
+      {authors.map((author, index) => (
+        <div
+          key={`${author.name}-${index}`}
+          className="min-w-[290px] snap-start lg:min-w-0"
+        >
+          <AuthorCard author={author} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function HomePage({
   apiAuthors,
   apiBooks,
@@ -152,16 +175,7 @@ export default function HomePage({
           </h2>
           <div className="mx-auto mt-5 h-1 w-12 bg-[var(--home-gold)]" />
         </div>
-        <div className="mt-12 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {authors.map((author, index) => (
-            <AuthorCard key={`${author.name}-${index}`} author={author} />
-          ))}
-          {!authors.length ? (
-            <p className="col-span-full border border-dashed border-[var(--home-border)] bg-white p-8 text-center text-[var(--home-muted)]">
-              No founding authors are available yet.
-            </p>
-          ) : null}
-        </div>
+        <AuthorStrip authors={authors} />
       </HomeSection>
 
       <NewsletterSignup />

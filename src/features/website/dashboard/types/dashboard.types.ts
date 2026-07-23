@@ -15,9 +15,14 @@ export type DashboardStat = {
 };
 
 export type LibraryBook = {
+  orderItemId: string;
+  bookId: string;
   slug: string;
   title: string;
   author: string;
   cover: string;
   rating: number;
+  format: "EBOOK" | "AUDIOBOOK";
+  accessType: "DOWNLOAD" | "STREAM";
+  purchasedAt: string;
 };

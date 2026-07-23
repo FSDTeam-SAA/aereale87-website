@@ -1,7 +1,9 @@
-export type MyBook = {
-  slug: string;
-  title: string;
-  author: string;
-  cover: string;
-  rating: number;
+import type {
+  DashboardStat,
+  LibraryBook,
+} from "@/features/website/dashboard/types/dashboard.types";
+
+export type MyBooksData = {
+  books: LibraryBook[];
+  stats: DashboardStat[];
 };

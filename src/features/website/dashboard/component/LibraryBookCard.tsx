@@ -1,14 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Headphones, Download, Star } from "lucide-react";
 
 import type { LibraryBook } from "../types/dashboard.types";
 
-export function LibraryBookCard({ book }: { book: LibraryBook }) {
+export function LibraryBookCard({
+  book,
+  onAccess,
+  pending,
+}: {
+  book: LibraryBook;
+  onAccess: (book: LibraryBook) => void;
+  pending?: boolean;
+}) {
   return (
     <article className="border border-[var(--home-border)] bg-white p-5">
       <Link
-        href={`/products/${book.slug}`}
+        href={`/book/${book.slug}`}
         className="relative mx-auto block aspect-[0.72] w-full max-w-[190px] overflow-hidden bg-[var(--home-paper)] shadow-[0_12px_18px_rgba(27,46,36,0.16)]"
       >
         <Image
@@ -30,12 +38,32 @@ export function LibraryBookCard({ book }: { book: LibraryBook }) {
         ))}
       </div>
       <Link
-        href={`/products/${book.slug}`}
+        href={`/book/${book.slug}`}
         className="mt-2 block text-[20px] font-bold leading-[1.15] text-[var(--home-green)] transition hover:text-[var(--home-green-deep)]"
       >
         {book.title}
       </Link>
       <p className="mt-1 text-[14px] text-[var(--home-muted)]">{book.author}</p>
+      <p className="mt-1 text-[12px] uppercase tracking-[0.08em] text-[var(--home-muted)]">
+        {book.format} · Purchased {book.purchasedAt}
+      </p>
+      <button
+        type="button"
+        onClick={() => onAccess(book)}
+        disabled={pending}
+        className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 bg-[var(--home-gold)] px-4 text-[12px] font-bold uppercase tracking-[0.52px] text-white transition hover:bg-[var(--home-green)] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {book.accessType === "STREAM" ? (
+          <Headphones className="size-4" />
+        ) : (
+          <Download className="size-4" />
+        )}
+        {pending
+          ? "Preparing access..."
+          : book.accessType === "STREAM"
+            ? "Listen now"
+            : "Download"}
+      </button>
     </article>
   );
 }

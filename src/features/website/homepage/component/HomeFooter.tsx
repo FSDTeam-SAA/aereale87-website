@@ -5,6 +5,27 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 import type { FooterColumn } from "../types/homepage.types";
 
 export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
+  const linkMap: Record<string, string> = {
+    "All Books": "/categories?view=shop",
+    "New Releases": "/categories?view=shop",
+    "Best Sellers": "/categories?view=shop",
+    "Digital Books": "/my-books",
+    Leadership: "/categories?view=shop&category=Leadership",
+    "Children's": "/categories?view=shop&category=Children%27s",
+    "Faith & Wisdom": "/categories?view=shop&category=Faith%20%26%20Wisdom",
+    Business: "/categories?view=shop&category=Business",
+    "Our Story": "/about",
+    Authors: "/authors",
+    Blog: "/about",
+    Careers: "/about",
+    "Contact Us": "/contact",
+    "Shipping & Returns": "/contact",
+    FAQ: "/about",
+    "Track Order": "/checkout/success",
+    "Privacy Policy": "/author-terms",
+    "Terms of Service": "/author-terms",
+  };
+
   return (
     <footer
       id="about"
@@ -47,7 +68,7 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
                 {column.links.map((link) => (
                   <li key={link}>
                     <Link
-                      href="#top"
+                      href={linkMap[link] || "#top"}
                       className="text-[16px] leading-[1.2] text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
                     >
                       {link}
@@ -62,13 +83,13 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
           <p>© 2026 The Wonder Emporium. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link
-              href="#top"
+              href="/author-terms"
               className="transition hover:text-[var(--home-green-deep)]"
             >
               Privacy Policy
             </Link>
             <Link
-              href="#top"
+              href="/author-terms"
               className="transition hover:text-[var(--home-green-deep)]"
             >
               Terms of Service

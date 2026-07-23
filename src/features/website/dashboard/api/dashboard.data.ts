@@ -1,4 +1,11 @@
-import { Bell, BookOpen, Clock3, Grid3X3, Settings } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  Clock3,
+  Grid3X3,
+  ReceiptText,
+  Settings,
+} from "lucide-react";
 
 import type {
   DashboardNavItem,
@@ -16,6 +23,11 @@ export const dashboardNavItems: DashboardNavItem[] = [
     href: "/settings",
     label: "Settings",
     icon: Settings,
+  },
+  {
+    href: "/orders",
+    label: "Orders",
+    icon: ReceiptText,
   },
 ];
 
@@ -47,7 +59,7 @@ export const libraryBooks: LibraryBook[] = [];
 
 export const dashboardUser = {
   name: "User",
-  role: "Member",
+  role: "Reader",
   avatar: "/placeholder-author.png",
 };
 

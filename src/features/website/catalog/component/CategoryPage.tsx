@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -29,21 +29,22 @@ const allCategories = "All Categories";
 const allAuthors = "All Authors";
 
 export function CategoryPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const view = searchParams.get("view");
   const queryCategory = searchParams.get("category");
   const queryFormat = searchParams.get("format");
+  const querySearch = searchParams.get("search");
   const showCategoryCards = view !== "shop";
   const activeNavHref =
     view === "shop" ? "/categories?view=shop" : "/categories?view=categories";
 
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    queryCategory || allCategories,
-  );
+  const selectedCategory = queryCategory || allCategories;
   const [selectedAuthor, setSelectedAuthor] = useState<string>(allAuthors);
   const [selectedFormats, setSelectedFormats] = useState<string[]>(
     queryFormat ? [queryFormat] : [],
   );
+  const searchTerm = querySearch || "";
   const [maxPrice, setMaxPrice] = useState(0);
   const [page, setPage] = useState(1);
   const maxPriceTouchedRef = useRef(false);
@@ -54,8 +55,14 @@ export function CategoryPage() {
     queryFn: fetchBookCategories,
   });
   const booksQuery = useQuery({
-    queryKey: ["approved-books"],
-    queryFn: () => fetchCatalogBooks({ limit: 100 }),
+    queryKey: ["approved-books", selectedCategory, searchTerm],
+    queryFn: () =>
+      fetchCatalogBooks({
+        limit: 100,
+        search: searchTerm || undefined,
+        category:
+          selectedCategory !== allCategories ? selectedCategory : undefined,
+      }),
   });
   const authorsQuery = useQuery({
     queryKey: ["founding-authors"],
@@ -124,6 +131,17 @@ export function CategoryPage() {
     }
   }, [dynamicMaxPrice]);
 
+  function updateShopParams(next: { category?: string }) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", "shop");
+    if (next.category === allCategories) {
+      params.delete("category");
+    } else if (next.category) {
+      params.set("category", next.category);
+    }
+    router.replace(`/categories?${params.toString()}`);
+  }
+
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const numericPrice = Number(product.price.replace(/[^0-9.]/g, ""));
@@ -146,13 +164,21 @@ export function CategoryPage() {
         );
 
       const priceMatch = maxPrice === 0 || numericPrice <= maxPrice;
+      const searchMatch =
+        !searchTerm ||
+        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase());
 
-      return categoryMatch && authorMatch && formatMatch && priceMatch;
+      return (
+        categoryMatch && authorMatch && formatMatch && priceMatch && searchMatch
+      );
     });
   }, [
     booksQuery.data,
     maxPrice,
     products,
+    searchTerm,
     selectedAuthor,
     selectedCategory,
     selectedFormats,
@@ -271,6 +297,14 @@ export function CategoryPage() {
               Showing {filteredProducts.length === 0 ? 0 : startIndex}-
               {endIndex} of {filteredProducts.length} Books
             </p>
+            {searchTerm ? (
+              <p className="mb-4 text-[14px] text-[var(--home-muted)]">
+                Search results for{" "}
+                <span className="font-semibold text-[var(--home-green-deep)]">
+                  &quot;{searchTerm}&quot;
+                </span>
+              </p>
+            ) : null}
 
             <div className="space-y-6">
               <div className="border border-[var(--home-border)] bg-white p-4">
@@ -289,7 +323,7 @@ export function CategoryPage() {
                           name="category"
                           checked={selectedCategory === category}
                           onChange={() => {
-                            setSelectedCategory(category);
+                            updateShopParams({ category });
                             setPage(1);
                           }}
                           className="size-3 accent-[var(--home-green)]"

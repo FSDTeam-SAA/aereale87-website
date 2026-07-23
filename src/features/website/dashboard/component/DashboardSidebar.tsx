@@ -9,8 +9,9 @@ import { dashboardNavItems } from "../api/dashboard.data";
 
 export function DashboardSidebar({ activeHref }: { activeHref: string }) {
   const { data: session } = useSession();
-  const name = session?.user?.name ?? "Author";
+  const name = session?.user?.name ?? "Member";
   const avatar = session?.user?.image ?? "/home/reviewer-1.png";
+  const role = session?.user?.role ?? "READER";
 
   return (
     <aside className="flex bg-[#6f7f70] text-white lg:fixed lg:inset-y-0 lg:left-0 lg:w-[220px] lg:flex-col">
@@ -60,7 +61,7 @@ export function DashboardSidebar({ activeHref }: { activeHref: string }) {
           />
           <div>
             <p className="text-[14px] font-bold leading-tight">{name}</p>
-            <p className="text-[12px] text-white/80">Author</p>
+            <p className="text-[12px] text-white/80">{role}</p>
           </div>
         </div>
         <button

@@ -6,12 +6,11 @@ export async function proxy(request: NextRequest) {
   const token = await getToken({ req: request });
   const { pathname } = request.nextUrl;
 
-  const userRole = (token?.role as string)?.toUpperCase();
-  const isAdmin = userRole === "ADMIN" || userRole === "SUPERADMIN";
-  const isAuthor = userRole === "AUTHOR";
   const isGuest = !token;
   const isProtectedRoute =
-    pathname.startsWith("/my-books") || pathname.startsWith("/settings");
+    pathname.startsWith("/my-books") ||
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/orders");
 
   // Require a session for account pages.
   if (isGuest && isProtectedRoute) {
@@ -19,11 +18,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(
       new URL(`/auth/login?callbackUrl=${callbackUrl}`, request.url),
     );
-  }
-
-  // Only approved authors and administrators can manage books.
-  if (!isAuthor && !isAdmin && pathname.startsWith("/my-books")) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (token && pathname.startsWith("/auth/login")) {

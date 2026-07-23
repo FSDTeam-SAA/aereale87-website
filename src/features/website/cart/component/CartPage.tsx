@@ -235,6 +235,12 @@ export function CartPage() {
 
             <div className="mt-6 space-y-3">
               <Link
+                href="/checkout"
+                className="flex h-12 items-center justify-center bg-[var(--home-gold)] px-6 text-[12px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)]"
+              >
+                Proceed to Checkout
+              </Link>
+              <Link
                 href="/categories?view=shop"
                 className="flex h-12 items-center justify-center border border-[var(--home-gold)] px-6 text-[12px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white"
               >
@@ -266,7 +272,7 @@ export function CartPage() {
               </p>
               <p className="flex items-center gap-2">
                 <LockKeyhole className="size-4 text-[var(--home-gold)]" />
-                Checkout is not enabled yet
+                Checkout uses live Stripe session creation
               </p>
             </div>
           </aside>

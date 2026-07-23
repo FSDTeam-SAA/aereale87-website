@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ChevronDown,
   LogOut,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { siteNavItems } from "@/data/catalog";
 import { cn } from "@/lib/utils";
@@ -34,10 +36,13 @@ export function SiteHeader({
 }: {
   activeHref?: string;
 }) {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const role = (session?.user as { role?: string } | undefined)?.role;
   const isAuthor = role === "AUTHOR";
   const isLoggedIn = status === "authenticated";
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const { data: categories } = useQuery({
     queryKey: ["book-categories"],
     queryFn: fetchCategories,
@@ -50,6 +55,15 @@ export function SiteHeader({
         label: cat.name,
       })) ?? [],
   };
+
+  function submitSearch() {
+    const params = new URLSearchParams({ view: "shop" });
+    if (searchTerm.trim()) {
+      params.set("search", searchTerm.trim());
+    }
+    router.push(`/categories?${params.toString()}`);
+    setIsSearchOpen(false);
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-[rgba(232,224,204,0.7)] bg-[var(--home-surface)]/95 backdrop-blur">
@@ -124,13 +138,43 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center justify-center gap-3 lg:justify-end">
-          <button
-            type="button"
-            aria-label="Search the catalog"
-            className="text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
-          >
-            <Search className="size-5" />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              aria-label="Search the catalog"
+              onClick={() => setIsSearchOpen((current) => !current)}
+              className="text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
+            >
+              <Search className="size-5" />
+            </button>
+            {isSearchOpen ? (
+              <div className="absolute right-0 top-full z-50 mt-3 w-[280px] border border-[var(--home-border)] bg-white p-3 shadow-[0_18px_45px_rgba(27,46,36,0.12)]">
+                <label htmlFor="site-search" className="sr-only">
+                  Search books and authors
+                </label>
+                <input
+                  id="site-search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      submitSearch();
+                    }
+                  }}
+                  placeholder="Search books and authors"
+                  className="h-11 w-full border border-[var(--home-border)] px-4 text-[14px] outline-none transition focus:border-[var(--home-gold)]"
+                />
+                <button
+                  type="button"
+                  onClick={submitSearch}
+                  className="mt-3 flex h-10 w-full items-center justify-center bg-[var(--home-gold)] text-[12px] font-bold uppercase tracking-[0.52px] text-white transition hover:bg-[var(--home-green)]"
+                >
+                  Search catalog
+                </button>
+              </div>
+            ) : null}
+          </div>
           <Link
             href="/cart"
             aria-label="Shopping cart"

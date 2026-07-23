@@ -1,7 +1,10 @@
-import { myBooks } from "../api/myBooks.data";
+import { useQuery } from "@tanstack/react-query";
+
+import { getMyBooks } from "../api/myBooks.api";
 
 export function useMyBooksData() {
-  return {
-    books: myBooks,
-  };
+  return useQuery({
+    queryKey: ["my-library"],
+    queryFn: getMyBooks,
+  });
 }
