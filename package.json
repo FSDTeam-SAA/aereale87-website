@@ -45,7 +45,7 @@
     "idb-keyval": "^6.2.6",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.553.0",
-    "next": "16.2.10",
+    "next": "16.2.11",
     "next-auth": "^4.24.14",
     "radix-ui": "^1.6.1",
     "react": "19.2.7",
