@@ -1,19 +1,51 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import type { FooterColumn } from "../types/homepage.types";
+import { fetchBookCategories } from "@/features/website/catalog/api/catalog.api";
+
+const DEFAULT_CATEGORIES = [
+  "Leadership",
+  "Children's",
+  "Faith & Wisdom",
+  "Business",
+];
 
 export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
+  const categoriesQuery = useQuery({
+    queryKey: ["book-categories"],
+    queryFn: fetchBookCategories,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const apiCategories = categoriesQuery.data?.categories
+    ?.map((cat) => (typeof cat === "string" ? cat : cat.name))
+    .filter((name): name is string => Boolean(name));
+
+  // Combine live database categories with defaults, maintaining uniqueness
+  const dynamicCategories = Array.from(
+    new Set([...(apiCategories || []), ...DEFAULT_CATEGORIES]),
+  );
+
+  const displayColumns = columns.map((col) => {
+    if (col.heading === "CATEGORIES") {
+      return {
+        ...col,
+        links: dynamicCategories,
+      };
+    }
+    return col;
+  });
+
   const linkMap: Record<string, string> = {
     "All Books": "/categories?view=shop",
-    "New Releases": "/categories?view=shop",
-    "Best Sellers": "/categories?view=shop",
+    "New Releases": "/categories?view=shop&sort=newest",
+    "Best Sellers": "/categories?view=shop&sort=popular",
     "Digital Books": "/my-books",
-    Leadership: "/categories?view=shop&category=Leadership",
-    "Children's": "/categories?view=shop&category=Children%27s",
-    "Faith & Wisdom": "/categories?view=shop&category=Faith%20%26%20Wisdom",
-    Business: "/categories?view=shop&category=Business",
     "Our Story": "/about",
     Authors: "/authors",
     Blog: "/about",
@@ -22,8 +54,20 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
     "Shipping & Returns": "/contact",
     FAQ: "/about",
     "Track Order": "/checkout/success",
-    "Privacy Policy": "/author-terms",
-    "Terms of Service": "/author-terms",
+    "Author Terms": "/author-terms",
+    "Founding Authors Addendum": "/founding-authors-addendum",
+    "Cookie Policy": "/cookie-policy",
+    "Privacy Policy": "/privacy-policy",
+    "Customer Privacy Policy": "/privacy-policy",
+    "Terms of Service": "/terms-of-service-customer",
+  };
+
+  const getLinkHref = (link: string, heading: string) => {
+    if (linkMap[link]) return linkMap[link];
+    if (heading === "CATEGORIES") {
+      return `/categories?view=shop&category=${encodeURIComponent(link)}`;
+    }
+    return "#top";
   };
 
   return (
@@ -59,7 +103,7 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
               ))}
             </div>
           </div>
-          {columns.map((column) => (
+          {displayColumns.map((column) => (
             <div key={column.heading}>
               <h2 className="text-[16px] font-semibold uppercase leading-[1.2] text-[var(--home-green-deep)]">
                 {column.heading}
@@ -68,7 +112,7 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
                 {column.links.map((link) => (
                   <li key={link}>
                     <Link
-                      href={linkMap[link] || "#top"}
+                      href={getLinkHref(link, column.heading)}
                       className="text-[16px] leading-[1.2] text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
                     >
                       {link}
@@ -81,15 +125,33 @@ export function HomeFooter({ columns }: { columns: FooterColumn[] }) {
         </div>
         <div className="mt-12 flex flex-col gap-4 border-t border-[rgba(232,224,204,0.8)] pt-6 text-[12px] leading-[1.2] text-[var(--home-muted)] sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 The Wonder Emporium. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-6">
             <Link
               href="/author-terms"
               className="transition hover:text-[var(--home-green-deep)]"
             >
-              Privacy Policy
+              Author Terms
             </Link>
             <Link
-              href="/author-terms"
+              href="/founding-authors-addendum"
+              className="transition hover:text-[var(--home-green-deep)]"
+            >
+              Founding Authors Addendum
+            </Link>
+            <Link
+              href="/cookie-policy"
+              className="transition hover:text-[var(--home-green-deep)]"
+            >
+              Cookie Policy
+            </Link>
+            <Link
+              href="/privacy-policy"
+              className="transition hover:text-[var(--home-green-deep)]"
+            >
+              Customer Privacy Policy
+            </Link>
+            <Link
+              href="/terms-of-service-customer"
               className="transition hover:text-[var(--home-green-deep)]"
             >
               Terms of Service

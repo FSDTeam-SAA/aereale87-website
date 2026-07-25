@@ -77,7 +77,7 @@ export function CategoryPage() {
   const categoryFilters = useMemo(
     () => [
       allCategories,
-      ...(categoriesQuery.data?.categories.map((category) => category.name) ??
+      ...(categoriesQuery.data?.categories?.map((category) => category.name) ??
         []),
     ],
     [categoriesQuery.data],
@@ -333,7 +333,7 @@ export function CategoryPage() {
                       <span>
                         {category === allCategories
                           ? (categoriesQuery.data?.total ?? products.length)
-                          : (categoriesQuery.data?.categories.find(
+                          : (categoriesQuery.data?.categories?.find(
                               (item) => item.name === category,
                             )?.count ?? "")}
                       </span>
