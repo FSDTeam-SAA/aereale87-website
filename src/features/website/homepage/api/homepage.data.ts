@@ -60,11 +60,13 @@ export const footerColumns: FooterColumn[] = [
     links: ["Leadership", "Children's", "Faith & Wisdom", "Business"],
   },
   {
-    heading: "ABOUT",
-    links: ["Our Story", "Authors", "Blog", "Careers"],
-  },
-  {
     heading: "SUPPORT",
-    links: ["Contact Us", "Shipping & Returns", "FAQ", "Track Order"],
+    links: [
+      "Author Terms",
+      "Founding Authors Addendum",
+      "Cookie Policy",
+      "Customer Privacy Policy",
+      "Terms of Service",
+    ],
   },
 ];

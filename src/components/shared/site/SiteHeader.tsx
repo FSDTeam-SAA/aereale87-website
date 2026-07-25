@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  BookOpen,
   ChevronDown,
   LogOut,
   Menu,
+  ReceiptText,
   Search,
   ShoppingBag,
   User,
@@ -15,20 +17,42 @@ import { useSession, signOut } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-import { siteNavItems } from "@/data/catalog";
+import { categoryFilters, siteNavItems } from "@/data/catalog";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
+import { getCart } from "@/features/website/cart/api/cart.api";
 
 interface BookCategory {
   name: string;
   count: number;
 }
 
-async function fetchCategories() {
-  const response = await api.get<{ categories: BookCategory[]; total: number }>(
-    "/books/categories",
-  );
-  return response.data.categories;
+async function fetchCategories(): Promise<BookCategory[]> {
+  try {
+    const response = await api.get("/books/categories");
+    const payload = response.data?.data ?? response.data;
+    const rawList = Array.isArray(payload?.categories)
+      ? payload.categories
+      : Array.isArray(payload)
+        ? payload
+        : [];
+
+    if (rawList.length > 0) {
+      return rawList.map(
+        (item: { name?: string; count?: number } | string) => ({
+          name: typeof item === "string" ? item : item.name || String(item),
+          count:
+            typeof item === "object" && item !== null ? (item.count ?? 0) : 0,
+        }),
+      );
+    }
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+  }
+
+  return categoryFilters
+    .filter((cat) => cat !== "All Categories")
+    .map((name) => ({ name, count: 0 }));
 }
 
 export function SiteHeader({
@@ -48,12 +72,28 @@ export function SiteHeader({
     queryFn: fetchCategories,
   });
 
+  const { data: cart } = useQuery({
+    queryKey: ["cart"],
+    queryFn: getCart,
+    enabled: isLoggedIn,
+    retry: false,
+  });
+
+  const cartCount =
+    cart?.items?.reduce((total, item) => total + (item.quantity || 1), 0) ?? 0;
+
+  const categoryList =
+    categories && categories.length > 0
+      ? categories
+      : categoryFilters
+          .filter((cat) => cat !== "All Categories")
+          .map((name) => ({ name, count: 0 }));
+
   const navMenus: Record<string, { href: string; label: string }[]> = {
-    CATEGORIES:
-      categories?.map((cat) => ({
-        href: `/categories?view=shop&category=${encodeURIComponent(cat.name)}`,
-        label: cat.name,
-      })) ?? [],
+    CATEGORIES: categoryList.map((cat) => ({
+      href: `/categories?view=shop&category=${encodeURIComponent(cat.name)}`,
+      label: cat.name,
+    })),
   };
 
   function submitSearch() {
@@ -178,9 +218,14 @@ export function SiteHeader({
           <Link
             href="/cart"
             aria-label="Shopping cart"
-            className="relative text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
+            className="relative flex items-center justify-center text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
           >
             <ShoppingBag className="size-5" />
+            {cartCount > 0 && (
+              <span className="absolute -right-2.5 -top-2.5 flex size-4 min-w-4 items-center justify-center rounded-full bg-[var(--home-gold)] px-1 text-[10px] font-bold text-white shadow-sm">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
           </Link>
 
           {/* ── Account CTA ── */}
@@ -221,13 +266,29 @@ export function SiteHeader({
 
                   {/* Regular user links */}
                   {!isAuthor && (
-                    <Link
-                      href="/settings"
-                      className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
-                    >
-                      <User className="size-4" />
-                      My Account
-                    </Link>
+                    <>
+                      <Link
+                        href="/my-books"
+                        className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                      >
+                        <BookOpen className="size-4" />
+                        My Library
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                      >
+                        <ReceiptText className="size-4" />
+                        My Orders
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                      >
+                        <User className="size-4" />
+                        Settings
+                      </Link>
+                    </>
                   )}
 
                   <div className="mx-4 border-t border-[var(--home-border)]" />

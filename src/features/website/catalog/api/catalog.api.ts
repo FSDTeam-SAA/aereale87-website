@@ -1,11 +1,5 @@
 import type { Product, ProductFormat } from "@/data/catalog";
 
-type ApiEnvelope<T> = {
-  statusCode: number;
-  message: string;
-  data: T;
-};
-
 export type BookCategory = {
   name: string;
   count: number;
@@ -184,20 +178,43 @@ async function publicFetch<T>(path: string): Promise<T> {
     throw new Error(`API request failed (${response.status}).`);
   }
 
-  const payload = (await response.json()) as ApiEnvelope<T> | T;
-  return "data" in (payload as ApiEnvelope<T>)
-    ? (payload as ApiEnvelope<T>).data
-    : (payload as T);
+  const payload = await response.json();
+  let data = payload;
+  if (
+    data &&
+    typeof data === "object" &&
+    "data" in data &&
+    data.data !== undefined
+  ) {
+    data = data.data;
+  }
+  if (
+    data &&
+    typeof data === "object" &&
+    "data" in data &&
+    data.data !== undefined
+  ) {
+    data = data.data;
+  }
+  return data as T;
 }
 
 export async function fetchBookCategories(): Promise<{
   categories: BookCategory[];
   total: number;
 }> {
-  return publicFetch<{
-    categories: BookCategory[];
-    total: number;
-  }>("/books/categories");
+  const data = (await publicFetch<unknown>("/books/categories")) as
+    BookCategory[] | { categories: BookCategory[]; total?: number } | null;
+  if (Array.isArray(data)) {
+    return { categories: data, total: data.length };
+  }
+  if (data && Array.isArray(data.categories)) {
+    return {
+      categories: data.categories,
+      total: data.total ?? data.categories.length,
+    };
+  }
+  return { categories: [], total: 0 };
 }
 
 export async function fetchCatalogBooks(
