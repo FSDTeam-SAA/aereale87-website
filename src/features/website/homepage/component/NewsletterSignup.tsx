@@ -61,12 +61,12 @@ export function NewsletterSignup() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
               disabled={loading}
-              className="h-[58px] flex-1 border border-[var(--home-border)] bg-[var(--home-surface)] px-6 text-[16px] text-[var(--home-green-deep)] outline-none transition placeholder:text-[var(--home-muted)] focus:border-[var(--home-gold)] disabled:opacity-50"
+              className="h-[52px] w-full min-w-0 border border-[var(--home-border)] bg-white px-5 text-[15px] text-[var(--home-green-deep)] outline-none transition placeholder:text-[var(--home-muted)] focus:border-[var(--home-gold)] disabled:opacity-50 sm:h-[58px] sm:flex-1 sm:px-6 sm:text-[16px]"
             />
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex h-[58px] min-w-[218px] items-center justify-center border border-[var(--home-gold)] bg-[var(--home-gold)] px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-transparent hover:text-[var(--home-gold)] [font-family:var(--font-display)] disabled:opacity-50"
+              className="inline-flex h-[52px] w-full items-center justify-center border border-[var(--home-gold)] bg-[var(--home-gold)] px-6 text-[15px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-transparent hover:text-[var(--home-gold)] [font-family:var(--font-display)] disabled:opacity-50 sm:h-[58px] sm:min-w-[218px] sm:w-auto sm:px-8 sm:text-[16px]"
             >
               {loading ? "Subscribing..." : "Subscribe Now"}
             </button>

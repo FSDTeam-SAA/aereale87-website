@@ -21,6 +21,14 @@ import { categoryFilters, siteNavItems } from "@/data/catalog";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { getCart } from "@/features/website/cart/api/cart.api";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface BookCategory {
   name: string;
@@ -67,6 +75,7 @@ export function SiteHeader({
   const isLoggedIn = status === "authenticated";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: categories } = useQuery({
     queryKey: ["book-categories"],
     queryFn: fetchCategories,
@@ -107,8 +116,8 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-50 border-b border-[rgba(232,224,204,0.7)] bg-[var(--home-surface)]/95 backdrop-blur">
-      <div className="mx-auto container flex flex-col gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:flex-row lg:items-center lg:justify-between lg:px-[120px]">
-        <div className="flex items-center justify-between gap-4">
+      <div className="mx-auto container flex items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:min-h-[86px] lg:px-[120px]">
+        <div className="flex w-full items-center justify-between gap-4 lg:w-auto">
           <Link href="/" className="shrink-0">
             <Image
               src="/images/logo.svg"
@@ -119,16 +128,171 @@ export function SiteHeader({
               className="h-auto w-[130px] sm:w-[150px] lg:w-[120px]"
             />
           </Link>
-          <button
-            type="button"
-            aria-label="Open navigation"
-            className="inline-flex size-10 items-center justify-center border border-[var(--home-border)] text-[var(--home-green-deep)] lg:hidden"
-          >
-            <Menu className="size-5" />
-          </button>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                aria-label="Open navigation"
+                className="inline-flex size-10 items-center justify-center border border-[var(--home-border)] text-[var(--home-green-deep)] lg:hidden"
+              >
+                <Menu className="size-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-[85%] border-l border-[var(--home-border)] bg-[var(--home-surface)] p-0 sm:max-w-[360px]"
+            >
+              <SheetHeader className="border-b border-[var(--home-border)] px-6 py-5 text-left">
+                <SheetTitle className="text-[18px] font-semibold text-[var(--home-green-deep)]">
+                  Menu
+                </SheetTitle>
+              </SheetHeader>
+
+              <div className="flex h-full flex-col overflow-y-auto px-6 py-6">
+                <nav aria-label="Mobile Primary">
+                  <ul className="space-y-2">
+                    {siteNavItems.map((item) => {
+                      const menuItems = navMenus[item.label];
+                      const isActive =
+                        item.href === activeHref ||
+                        (activeHref.startsWith("/authors") &&
+                          item.href === "/authors");
+
+                      return (
+                        <li key={`mobile-${item.label}-${item.href}`}>
+                          <SheetClose asChild>
+                            <Link
+                              href={item.href}
+                              className={cn(
+                                "flex items-center justify-between border-b border-[rgba(232,224,204,0.7)] py-3 text-[13px] font-semibold uppercase tracking-[0.5px]",
+                                isActive
+                                  ? "text-[var(--home-ink)]"
+                                  : "text-[var(--home-muted)]",
+                              )}
+                            >
+                              <span>{item.label}</span>
+                              {menuItems ? (
+                                <ChevronDown className="size-4 opacity-70" />
+                              ) : null}
+                            </Link>
+                          </SheetClose>
+
+                          {menuItems ? (
+                            <div className="space-y-1 pb-3 pl-3 pt-2">
+                              {menuItems.map((menuItem) => (
+                                <SheetClose key={menuItem.href} asChild>
+                                  <Link
+                                    href={menuItem.href}
+                                    className="block py-2 text-[13px] text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
+                                  >
+                                    {menuItem.label}
+                                  </Link>
+                                </SheetClose>
+                              ))}
+                            </div>
+                          ) : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+
+                <div className="mt-6 flex items-center gap-4 border-t border-[var(--home-border)] pt-5">
+                  <SheetClose asChild>
+                    <button
+                      type="button"
+                      aria-label="Search the catalog"
+                      onClick={() => setIsSearchOpen(true)}
+                      className="text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
+                    >
+                      <Search className="size-5" />
+                    </button>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      href="/cart"
+                      aria-label="Shopping cart"
+                      className="relative flex items-center justify-center text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
+                    >
+                      <ShoppingBag className="size-5" />
+                      {cartCount > 0 && (
+                        <span className="absolute -right-2.5 -top-2.5 flex size-4 min-w-4 items-center justify-center rounded-full bg-[var(--home-gold)] px-1 text-[10px] font-bold text-white shadow-sm">
+                          {cartCount > 99 ? "99+" : cartCount}
+                        </span>
+                      )}
+                    </Link>
+                  </SheetClose>
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  {!isLoggedIn ? (
+                    <SheetClose asChild>
+                      <Link
+                        href="/auth/login"
+                        className="inline-flex h-11 w-full items-center justify-center gap-2 border border-[var(--home-gold)] px-4 text-[12px] font-bold uppercase tracking-[0.52px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white [font-family:var(--font-display)]"
+                      >
+                        Sign In
+                      </Link>
+                    </SheetClose>
+                  ) : (
+                    <div className="space-y-2">
+                      {isAuthor ? (
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}/author-dashboard`}
+                          className="flex items-center gap-3 border border-[var(--home-border)] px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                        >
+                          <User className="size-4" />
+                          My Dashboard
+                        </a>
+                      ) : (
+                        <>
+                          <SheetClose asChild>
+                            <Link
+                              href="/my-books"
+                              className="flex items-center gap-3 border border-[var(--home-border)] px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                            >
+                              <BookOpen className="size-4" />
+                              My Library
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link
+                              href="/orders"
+                              className="flex items-center gap-3 border border-[var(--home-border)] px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                            >
+                              <ReceiptText className="size-4" />
+                              My Orders
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link
+                              href="/settings"
+                              className="flex items-center gap-3 border border-[var(--home-border)] px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                            >
+                              <User className="size-4" />
+                              Settings
+                            </Link>
+                          </SheetClose>
+                        </>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="flex w-full items-center gap-3 border border-red-100 px-4 py-3 text-[13px] font-medium text-red-600 transition hover:bg-red-50"
+                      >
+                        <LogOut className="size-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
-        <nav aria-label="Primary" className="overflow-visible">
+        <nav aria-label="Primary" className="hidden overflow-visible lg:block">
           <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 lg:gap-x-7 xl:gap-x-9">
             {siteNavItems.map((item) => {
               const menuItems = navMenus[item.label];
@@ -177,7 +341,7 @@ export function SiteHeader({
           </ul>
         </nav>
 
-        <div className="flex items-center justify-center gap-3 lg:justify-end">
+        <div className="hidden items-center justify-center gap-3 lg:flex lg:justify-end">
           <div className="relative">
             <button
               type="button"
