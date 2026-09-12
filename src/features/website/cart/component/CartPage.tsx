@@ -36,6 +36,7 @@ import {
   removeCartItem,
   updateCartItemQuantity,
 } from "../api/cart.api";
+import { RefundDisclosure } from "./RefundDisclosureModal";
 
 const benefitIcons = [Truck, CreditCard, Headphones, Download];
 
@@ -233,7 +234,11 @@ export function CartPage() {
               </div>
             </dl>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-5">
+              <RefundDisclosure variant="card" />
+            </div>
+
+            <div className="mt-5 space-y-3">
               <Link
                 href="/checkout"
                 className="flex h-12 items-center justify-center bg-[var(--home-gold)] px-6 text-[12px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green)]"
@@ -256,6 +261,11 @@ export function CartPage() {
                 </button>
               ) : null}
             </div>
+
+            <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--home-muted)]">
+              All sales are final. Please review our{" "}
+              <RefundDisclosure variant="inline" className="text-[11px]" />.
+            </p>
 
             <div className="mt-6 space-y-3 bg-[var(--home-surface)] p-4 text-[13px] text-[var(--home-muted)]">
               <p className="flex items-center gap-2">

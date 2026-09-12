@@ -15,6 +15,7 @@ import {
   mapCatalogBookToProduct,
 } from "@/features/website/catalog/api/catalog.api";
 import { api } from "@/lib/api";
+import { RefundDisclosure } from "@/features/website/cart/component/RefundDisclosureModal";
 
 function Field({
   id,
@@ -220,7 +221,11 @@ export function CheckoutPage() {
               </div>
             </dl>
 
-            <div className="space-y-3 px-6 pb-6 pt-6">
+            <div className="px-6 pt-5">
+              <RefundDisclosure variant="card" />
+            </div>
+
+            <div className="space-y-3 px-6 pb-6 pt-4">
               <button
                 type="button"
                 onClick={() => {
@@ -248,6 +253,11 @@ export function CheckoutPage() {
               >
                 Cancel
               </Link>
+              <p className="pt-1 text-center text-[11px] leading-relaxed text-[var(--home-muted)]">
+                By completing your purchase, you acknowledge that all sales are
+                final per our{" "}
+                <RefundDisclosure variant="inline" className="text-[11px]" />.
+              </p>
             </div>
           </aside>
         </div>
