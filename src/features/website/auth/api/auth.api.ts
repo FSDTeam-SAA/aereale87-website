@@ -74,13 +74,25 @@ export const authApi = {
 };
 
 export function getApiErrorMessage(error: unknown): string {
-  if (axios.isAxiosError<{ message?: string }>(error)) {
+  if (
+    axios.isAxiosError<{
+      message?: string | string[];
+      error?: string;
+      data?: { message?: string };
+    }>(error)
+  ) {
     if (error.code === "ECONNABORTED") {
       return "The server took too long to respond. Please try again.";
     }
-    return (
-      error.response?.data?.message || "The request could not be completed."
-    );
+    const resData = error.response?.data;
+    if (resData) {
+      if (typeof resData.message === "string") return resData.message;
+      if (Array.isArray(resData.message) && resData.message.length > 0)
+        return resData.message[0];
+      if (resData.data?.message) return resData.data.message;
+      if (typeof resData.error === "string") return resData.error;
+    }
+    return error.message || "The request could not be completed.";
   }
   return error instanceof Error ? error.message : "Something went wrong.";
 }

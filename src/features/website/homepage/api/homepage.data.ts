@@ -11,6 +11,7 @@ export const navItems: NavItem[] = [
   { href: "/categories?view=shop", label: "SHOP" },
   { href: "/authors", label: "AUTHORS" },
   { href: "/about", label: "ABOUT" },
+  { href: "/contact", label: "SUPPORT" },
 ];
 
 export const stats: StatItem[] = [
@@ -62,11 +63,11 @@ export const footerColumns: FooterColumn[] = [
   {
     heading: "SUPPORT",
     links: [
-      "Author Terms",
-      "Founding Authors Addendum",
-      "Cookie Policy",
-      "Customer Privacy Policy",
-      "Terms of Service",
+      "Contact Support",
+      "Help Center & FAQ",
+      "Track Order",
+      "Shipping & Returns",
+      "Author Support",
     ],
   },
 ];

@@ -75,6 +75,7 @@ export const siteNavItems = [
   { href: "/categories?view=shop", label: "SHOP" },
   { href: "/authors", label: "AUTHORS" },
   { href: "/about", label: "ABOUT" },
+  { href: "/contact", label: "SUPPORT" },
 ] as const;
 
 const baseReviews: ProductReview[] = [

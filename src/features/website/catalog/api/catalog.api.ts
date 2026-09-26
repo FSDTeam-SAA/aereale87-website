@@ -213,12 +213,16 @@ export function mapCatalogBookToProduct(book: CatalogBook): Product {
 }
 
 async function publicFetch<T>(path: string): Promise<T> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/v1";
+  const cleanBase = baseUrl.replace(/\/+$/, "");
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+  const response = await fetch(`${cleanBase}${cleanPath}`, {
     cache: "no-store",
   });
 
   if (!response.ok) {
-    throw new Error(`API request failed (${response.status}).`);
+    throw new Error(`API request failed (${response.status}) for ${cleanPath}`);
   }
 
   const payload = await response.json();

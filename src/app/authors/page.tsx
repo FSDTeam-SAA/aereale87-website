@@ -3,7 +3,7 @@ import { fetchFoundingAuthors } from "@/features/website/catalog/api/catalog.api
 
 async function getFoundingAuthors() {
   try {
-    return fetchFoundingAuthors();
+    return await fetchFoundingAuthors();
   } catch (error) {
     console.warn("Failed to fetch authors data:", error);
     return {

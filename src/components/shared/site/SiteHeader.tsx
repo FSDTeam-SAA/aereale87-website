@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   BookOpen,
   ChevronDown,
+  HelpCircle,
   LogOut,
   Menu,
   ReceiptText,
@@ -103,6 +104,15 @@ export function SiteHeader({
       href: `/categories?view=shop&category=${encodeURIComponent(cat.name)}`,
       label: cat.name,
     })),
+    SUPPORT: [
+      { href: "/contact", label: "Contact Support" },
+      { href: "/contact#faq", label: "Help Center & FAQ" },
+      { href: "/contact#shipping", label: "Shipping & Returns" },
+      {
+        href: "/contact?topic=Author+Account+%26+Publishing",
+        label: "Author Support",
+      },
+    ],
   };
 
   function submitSearch() {
@@ -273,6 +283,15 @@ export function SiteHeader({
                               Settings
                             </Link>
                           </SheetClose>
+                          <SheetClose asChild>
+                            <Link
+                              href="/contact"
+                              className="flex items-center gap-3 border border-[var(--home-border)] px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                            >
+                              <HelpCircle className="size-4" />
+                              Help & Support
+                            </Link>
+                          </SheetClose>
                         </>
                       )}
 
@@ -321,7 +340,7 @@ export function SiteHeader({
                   </Link>
 
                   {menuItems ? (
-                    <div className="invisible absolute left-1/2 top-full z-50 w-[220px] -translate-x-1/2 pt-3 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="invisible absolute left-1/2 top-full z-50 w-[220px] -translate-x-1/2 pt-3 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100">
                       <div className="border border-[var(--home-border)] bg-white p-2 shadow-[0_18px_45px_rgba(27,46,36,0.12)]">
                         {menuItems.map((menuItem) => (
                           <Link
@@ -413,7 +432,7 @@ export function SiteHeader({
                 <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
               </button>
 
-              <div className="invisible absolute right-0 top-full z-50 w-[200px] pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="invisible absolute right-0 top-full z-50 w-[200px] pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100">
                 <div className="border border-[var(--home-border)] bg-white shadow-[0_18px_45px_rgba(27,46,36,0.12)]">
                   {/* Author-specific links */}
                   {isAuthor && (
@@ -451,6 +470,13 @@ export function SiteHeader({
                       >
                         <User className="size-4" />
                         Settings
+                      </Link>
+                      <Link
+                        href="/contact"
+                        className="flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-[var(--home-muted)] transition hover:bg-[var(--home-paper)] hover:text-[var(--home-green-deep)]"
+                      >
+                        <HelpCircle className="size-4" />
+                        Help & Support
                       </Link>
                     </>
                   )}

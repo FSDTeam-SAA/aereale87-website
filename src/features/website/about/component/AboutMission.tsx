@@ -1,33 +1,36 @@
-import { missionItems } from "../api/about.data";
-
 export function AboutMission() {
   return (
     <section className="bg-white px-5 py-14 sm:px-8 lg:px-[120px] lg:py-16">
-      <div className="mx-auto max-w-[1440px]">
-        <h2 className="text-center text-[34px] font-bold leading-[1.15] text-[var(--home-green-deep)] sm:text-[42px]">
+      <div className="mx-auto max-w-[1000px]">
+        <h2 className="text-[34px] font-bold leading-[1.15] text-[var(--home-green-deep)] sm:text-[42px]">
           Our Mission
         </h2>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {missionItems.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <article
-                key={item.title}
-                className="border border-[var(--home-border)] bg-[var(--home-surface)] p-7 shadow-[0_4px_18px_rgba(27,46,36,0.03)]"
-              >
-                <span className="inline-flex size-9 items-center justify-center border border-[var(--home-border)] bg-white text-[var(--home-green-deep)]">
-                  <Icon className="size-4" />
-                </span>
-                <h3 className="mt-5 text-[18px] font-bold leading-[1.25] text-[var(--home-green-deep)]">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-[14px] leading-[1.55] text-[var(--home-muted)] sm:text-[15px]">
-                  {item.description}
-                </p>
-              </article>
-            );
-          })}
+        <div className="mt-6 space-y-6 text-[16px] leading-[1.65] text-[var(--home-muted)] sm:text-[18px]">
+          <p className="border-l-4 border-[var(--home-green-deep)] pl-4 text-[19px] font-medium leading-[1.45] text-[var(--home-green-deep)] sm:text-[22px]">
+            Our mission is simple: give indie authors the conditions to do their
+            best work and the platform to be seen doing it.
+          </p>
+          <p>
+            Great writing takes time. It takes revision, discipline, and space
+            to focus on the craft instead of chasing a dozen scattered tools
+            just to get a book into readers&apos; hands. We built The Wonder
+            Emporium to remove that friction so authors spend less time
+            wrestling with logistics and more time writing the next great
+            chapter.
+          </p>
+          <p>
+            That means giving authors clear royalty structures they can plan
+            around, a streamlined path from manuscript to publication, and a
+            discovery experience that rewards quality work rather than burying
+            it under noise. We hold ourselves to the same standard we ask of the
+            stories on our platform: build it with care, build it to last, and
+            build it in service of the person who made it possible.
+          </p>
+          <p>
+            When authors have the tools to work efficiently and the confidence
+            that their craft will be seen, everyone wins — the author, the
+            reader, and the stories that deserve to exist in the world.
+          </p>
         </div>
       </div>
     </section>
