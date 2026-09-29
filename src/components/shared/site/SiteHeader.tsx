@@ -77,6 +77,16 @@ export function SiteHeader({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openMobileSubmenus, setOpenMobileSubmenus] = useState<
+    Record<string, boolean>
+  >({});
+
+  const toggleMobileSubmenu = (label: string) => {
+    setOpenMobileSubmenus((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
   const { data: categories } = useQuery({
     queryKey: ["book-categories"],
     queryFn: fetchCategories,
@@ -163,10 +173,65 @@ export function SiteHeader({
                   <ul className="space-y-2">
                     {siteNavItems.map((item) => {
                       const menuItems = navMenus[item.label];
+                      const isSubmenuOpen = !!openMobileSubmenus[item.label];
                       const isActive =
                         item.href === activeHref ||
                         (activeHref.startsWith("/authors") &&
                           item.href === "/authors");
+
+                      if (menuItems) {
+                        return (
+                          <li key={`mobile-${item.label}-${item.href}`}>
+                            <div className="flex items-center justify-between border-b border-[rgba(232,224,204,0.7)]">
+                              <SheetClose asChild>
+                                <Link
+                                  href={item.href}
+                                  className={cn(
+                                    "flex-1 py-3 text-[13px] font-semibold uppercase tracking-[0.5px]",
+                                    isActive
+                                      ? "text-[var(--home-ink)]"
+                                      : "text-[var(--home-muted)]",
+                                  )}
+                                >
+                                  {item.label}
+                                </Link>
+                              </SheetClose>
+                              <button
+                                type="button"
+                                aria-label={`Toggle ${item.label} submenu`}
+                                aria-expanded={isSubmenuOpen}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleMobileSubmenu(item.label);
+                                }}
+                                className="flex size-10 items-center justify-center text-[var(--home-muted)] transition-colors hover:text-[var(--home-ink)]"
+                              >
+                                <ChevronDown
+                                  className={cn(
+                                    "size-4 transition-transform duration-200",
+                                    isSubmenuOpen && "rotate-180",
+                                  )}
+                                />
+                              </button>
+                            </div>
+
+                            {isSubmenuOpen ? (
+                              <div className="space-y-1 pb-3 pl-3 pt-2">
+                                {menuItems.map((menuItem) => (
+                                  <SheetClose key={menuItem.href} asChild>
+                                    <Link
+                                      href={menuItem.href}
+                                      className="block py-2 text-[13px] text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
+                                    >
+                                      {menuItem.label}
+                                    </Link>
+                                  </SheetClose>
+                                ))}
+                              </div>
+                            ) : null}
+                          </li>
+                        );
+                      }
 
                       return (
                         <li key={`mobile-${item.label}-${item.href}`}>
@@ -181,26 +246,8 @@ export function SiteHeader({
                               )}
                             >
                               <span>{item.label}</span>
-                              {menuItems ? (
-                                <ChevronDown className="size-4 opacity-70" />
-                              ) : null}
                             </Link>
                           </SheetClose>
-
-                          {menuItems ? (
-                            <div className="space-y-1 pb-3 pl-3 pt-2">
-                              {menuItems.map((menuItem) => (
-                                <SheetClose key={menuItem.href} asChild>
-                                  <Link
-                                    href={menuItem.href}
-                                    className="block py-2 text-[13px] text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
-                                  >
-                                    {menuItem.label}
-                                  </Link>
-                                </SheetClose>
-                              ))}
-                            </div>
-                          ) : null}
                         </li>
                       );
                     })}
