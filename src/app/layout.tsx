@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   title: "The Wonder Emporium",
   description:
     "Discover premium books, storytelling, wisdom, and leadership content curated for discerning readers.",
+  icons: {
+    icon: [{ url: "/favicon.ico" }, { url: "/icon.png", type: "image/png" }],
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
