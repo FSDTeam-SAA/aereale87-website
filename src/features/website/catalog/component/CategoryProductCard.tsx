@@ -54,11 +54,20 @@ export function CategoryProductCard({ product }: { product: Product }) {
           <p className="text-[22px] font-bold leading-[1.2] text-[var(--home-green)]">
             {product.price}
           </p>
-          <AddToCartButton
-            bookId={product.slug}
-            formatId={product.formats[0]?.id}
-            className="inline-flex h-[52px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-[12px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
-          />
+          {product.isFree || product.price?.toLowerCase() === "free" ? (
+            <Link
+              href={`/book/${product.slug}`}
+              className="inline-flex h-[52px] w-full items-center justify-center border border-[var(--home-green)] bg-[var(--home-green)] text-[12px] font-bold uppercase tracking-[0.64px] text-white transition hover:bg-[var(--home-green-deep)] [font-family:var(--font-display)]"
+            >
+              Read / Listen Free
+            </Link>
+          ) : (
+            <AddToCartButton
+              bookId={product.slug}
+              formatId={product.formats[0]?.id}
+              className="inline-flex h-[52px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-[12px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
+            />
+          )}
         </div>
       </div>
     </article>

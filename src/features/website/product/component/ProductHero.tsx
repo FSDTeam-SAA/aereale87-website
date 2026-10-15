@@ -117,33 +117,82 @@ export function ProductHero({ product }: { product: Product }) {
           </div>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-            <div className="inline-flex h-[58px] items-center border border-[var(--home-border)]">
-              <button
-                type="button"
-                onClick={() =>
-                  setQuantity((current) => Math.max(1, current - 1))
-                }
-                className="inline-flex h-full w-12 items-center justify-center text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
-              >
-                <Minus className="size-4" />
-              </button>
-              <span className="inline-flex h-full min-w-12 items-center justify-center text-[16px] text-[var(--home-green-deep)]">
-                {quantity}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQuantity((current) => current + 1)}
-                className="inline-flex h-full w-12 items-center justify-center text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
-              >
-                <Plus className="size-4" />
-              </button>
-            </div>
-            <AddToCartButton
-              bookId={product.slug}
-              formatId={selectedFormat?.id}
-              quantity={quantity}
-              className="inline-flex h-[58px] min-w-[196px] items-center justify-center border border-[var(--home-gold)] bg-white px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
-            />
+            {selectedFormat?.isFree ||
+            selectedFormat?.price?.toLowerCase() === "free" ? (
+              <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+                {selectedFormat.formatType === "AUDIOBOOK" ? (
+                  <div className="flex-1 space-y-3">
+                    <a
+                      href={
+                        selectedFormat.digitalUrl || product.audiobookUrl || "#"
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-[58px] w-full items-center justify-center gap-2 border border-[var(--home-green)] bg-[var(--home-green)] px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-white shadow-md transition hover:bg-[var(--home-green-deep)] [font-family:var(--font-display)]"
+                    >
+                      <span>▶ Listen Free Now</span>
+                    </a>
+                    {(selectedFormat.digitalUrl || product.audiobookUrl) && (
+                      <div className="w-full rounded border border-[var(--home-border)] bg-[var(--home-paper)] p-3">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--home-muted)]">
+                          Audio Preview Player
+                        </p>
+                        <audio
+                          controls
+                          className="w-full h-10"
+                          src={
+                            selectedFormat.digitalUrl ||
+                            product.audiobookUrl ||
+                            ""
+                          }
+                        >
+                          Your browser does not support audio playback.
+                        </audio>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <a
+                    href={selectedFormat.digitalUrl || product.ebookUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-[58px] w-full items-center justify-center gap-2 border border-[var(--home-green)] bg-[var(--home-green)] px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-white shadow-md transition hover:bg-[var(--home-green-deep)] [font-family:var(--font-display)]"
+                  >
+                    <span>📖 Read Free Now (PDF / eBook)</span>
+                  </a>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="inline-flex h-[58px] items-center border border-[var(--home-border)]">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setQuantity((current) => Math.max(1, current - 1))
+                    }
+                    className="inline-flex h-full w-12 items-center justify-center text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
+                  >
+                    <Minus className="size-4" />
+                  </button>
+                  <span className="inline-flex h-full min-w-12 items-center justify-center text-[16px] text-[var(--home-green-deep)]">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((current) => current + 1)}
+                    className="inline-flex h-full w-12 items-center justify-center text-[var(--home-muted)] transition hover:text-[var(--home-green-deep)]"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                </div>
+                <AddToCartButton
+                  bookId={product.slug}
+                  formatId={selectedFormat?.id}
+                  quantity={quantity}
+                  className="inline-flex h-[58px] min-w-[196px] items-center justify-center border border-[var(--home-gold)] bg-white px-8 text-[16px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -32,6 +32,13 @@ export type CatalogBook = {
     pageCount?: number | null;
     trimSize?: string | null;
   }>;
+  files?: Array<{
+    id?: string;
+    type: string;
+    url: string | null;
+    fileKey?: string | null;
+    mimeType?: string | null;
+  }>;
   author?: {
     id?: string;
     username: string;
@@ -143,12 +150,32 @@ function getLowestPrice(formats: CatalogBook["formats"]): number {
   return Math.min(...formats.map((format) => format.listPrice));
 }
 
-function mapFormats(formats: CatalogBook["formats"]): ProductFormat[] {
-  return formats.map((format, index) => ({
-    id: format.id ?? `${format.formatType}-${index}`,
-    label: formatLabelMap[format.formatType] ?? format.formatType,
-    price: `$${format.listPrice.toFixed(2)}`,
-  }));
+function mapFormats(
+  formats: CatalogBook["formats"],
+  files?: CatalogBook["files"],
+): ProductFormat[] {
+  const ebookFile = files?.find((f) => f.type === "EBOOK");
+  const audiobookFile = files?.find((f) => f.type === "AUDIOBOOK");
+
+  return formats.map((format, index) => {
+    const isFree = format.listPrice <= 0;
+    const formatType = format.formatType.toUpperCase();
+    let digitalUrl: string | null = null;
+    if (formatType === "EBOOK") {
+      digitalUrl = ebookFile?.url || null;
+    } else if (formatType === "AUDIOBOOK") {
+      digitalUrl = audiobookFile?.url || null;
+    }
+
+    return {
+      id: format.id ?? `${format.formatType}-${index}`,
+      formatType,
+      label: formatLabelMap[format.formatType] ?? format.formatType,
+      price: isFree ? "Free" : `$${format.listPrice.toFixed(2)}`,
+      isFree,
+      digitalUrl,
+    };
+  });
 }
 
 function getAuthorName(book: CatalogBook): string {
@@ -169,17 +196,28 @@ export function mapCatalogBookToProduct(book: CatalogBook): Product {
     seedProduct?.reviewCount ?? deriveFallbackReviewCount(book);
   const seedAuthorProfile = seedProduct?.authorProfile;
 
+  const isFree =
+    lowestPrice <= 0 ||
+    (book.tags || []).some((t) => t.toLowerCase() === "public domain");
+  const ebookFile = book.files?.find((f) => f.type === "EBOOK");
+  const audiobookFile = book.files?.find((f) => f.type === "AUDIOBOOK");
+
   return {
     slug: book.id,
     title: book.title,
     author: authorName,
     category: book.category || "General",
     filterCategory: book.category || "All Categories",
-    price: `$${lowestPrice.toFixed(2)}`,
+    price: isFree ? "Free" : `$${lowestPrice.toFixed(2)}`,
+    isFree,
+    ebookUrl: ebookFile?.url || null,
+    audiobookUrl: audiobookFile?.url || null,
+    tags: book.tags || [],
     rating,
     reviewCount,
     cover: book.bookCover || "/no-image.jpg",
-    formats: mapFormats(book.formats),
+    badge: isFree ? "Free Public Domain" : undefined,
+    formats: mapFormats(book.formats, book.files),
     shortDescription: book.description || "",
     aboutQuote: seedProduct?.aboutQuote || "",
     aboutBody: book.description || "",

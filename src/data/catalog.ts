@@ -2,6 +2,9 @@ export type ProductFormat = {
   id: string;
   label: string;
   price: string;
+  formatType?: string;
+  isFree?: boolean;
+  digitalUrl?: string | null;
 };
 
 export type ProductSpec = {
@@ -26,6 +29,10 @@ export type Product = {
   category: string;
   filterCategory: string;
   price: string;
+  isFree?: boolean;
+  ebookUrl?: string | null;
+  audiobookUrl?: string | null;
+  tags?: string[];
   rating: number;
   reviewCount: number;
   cover: string;

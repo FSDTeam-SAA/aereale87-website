@@ -71,11 +71,20 @@ export function BookCard({ book }: { book: BookItem }) {
           <p className="text-[24px] font-bold leading-[1.2] text-[var(--home-green)]">
             {book.price}
           </p>
-          <AddToCartButton
-            bookId={book.id || ""}
-            formatId={book.formatId}
-            className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-center text-[14px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition duration-300 hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
-          />
+          {book.price?.toLowerCase() === "free" || book.price === "$0.00" ? (
+            <Link
+              href={`/book/${book.id}`}
+              className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-green)] bg-[var(--home-green)] text-center text-[14px] font-bold uppercase tracking-[0.64px] text-white transition duration-300 hover:bg-[var(--home-green-deep)] [font-family:var(--font-display)]"
+            >
+              Read / Listen Free
+            </Link>
+          ) : (
+            <AddToCartButton
+              bookId={book.id || ""}
+              formatId={book.formatId}
+              className="inline-flex h-[58px] w-full items-center justify-center border border-[var(--home-gold)] bg-transparent text-center text-[14px] font-bold uppercase tracking-[0.64px] text-[var(--home-gold)] transition duration-300 hover:bg-[var(--home-gold)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 [font-family:var(--font-display)]"
+            />
+          )}
         </div>
       </div>
     </article>
