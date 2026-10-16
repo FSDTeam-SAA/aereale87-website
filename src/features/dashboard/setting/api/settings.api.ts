@@ -70,3 +70,18 @@ export async function updateSettingsEmail(input: {
 }) {
   return api.patch("/auth/email", input);
 }
+
+export async function uploadSettingsAvatar(file: File) {
+  const formData = new FormData();
+  formData.append("avatar", file);
+  const response = await api.patch<{ message: string; avatarUrl: string }>(
+    "/auth/avatar",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return response.data;
+}

@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Copy, EyeOff } from "lucide-react";
-import { FormEvent } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { Copy, EyeOff, Camera, Upload, Loader2 } from "lucide-react";
+import { FormEvent, useRef } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { DashboardShell } from "@/features/website/dashboard/component/DashboardShell";
@@ -13,16 +13,56 @@ import {
   changeSettingsPassword,
   updateSettingsEmail,
   updateSettingsProfile,
+  uploadSettingsAvatar,
 } from "../api/settings.api";
 import { useSettingsData } from "../hooks/useSettingsData";
 
 export function SettingsPage() {
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const profileQuery = useSettingsData();
   const profile = profileQuery.data;
 
+  const avatarMutation = useMutation({
+    mutationFn: uploadSettingsAvatar,
+    onSuccess: (data) => {
+      toast.success(data?.message || "Profile picture updated successfully.");
+      void queryClient.invalidateQueries({
+        queryKey: ["website-settings-profile"],
+      });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to upload profile picture.");
+    },
+  });
+
+  function handleAvatarFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file (PNG, JPG, WebP).");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5 MB.");
+      return;
+    }
+
+    avatarMutation.mutate(file);
+    // Reset file input value so selecting the same file again triggers change event
+    event.target.value = "";
+  }
+
   const profileMutation = useMutation({
     mutationFn: updateSettingsProfile,
-    onSuccess: () => toast.success("Profile updated."),
+    onSuccess: () => {
+      toast.success("Profile updated.");
+      void queryClient.invalidateQueries({
+        queryKey: ["website-settings-profile"],
+      });
+    },
     onError: (error: Error) =>
       toast.error(error.message || "Unable to update profile."),
   });
@@ -93,14 +133,49 @@ export function SettingsPage() {
           ) : null}
 
           <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
-            <Image
-              src={profile?.avatar || "/placeholder-author.png"}
-              alt={profile?.name || "Profile"}
-              width={96}
-              height={96}
-              className="size-20 rounded-full object-cover sm:size-24"
-            />
-            <div>
+            {/* Avatar with upload button overlay */}
+            <div className="relative size-20 sm:size-24 shrink-0">
+              <div className="relative size-full overflow-hidden rounded-full border-2 border-[var(--home-gold)] bg-[var(--home-paper)] shadow-sm">
+                <Image
+                  src={profile?.avatar || "/placeholder-author.png"}
+                  alt={profile?.name || "Profile"}
+                  fill
+                  sizes="(max-width: 640px) 80px, 96px"
+                  className="object-cover"
+                />
+                {avatarMutation.isPending && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white backdrop-blur-[2px]">
+                    <Loader2 className="size-6 animate-spin text-[var(--home-gold)]" />
+                  </div>
+                )}
+              </div>
+
+              {/* Upload trigger button badge */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={avatarMutation.isPending}
+                aria-label="Upload profile picture"
+                title="Change profile picture"
+                className="absolute -bottom-1 -right-1 flex size-8 items-center justify-center rounded-full bg-[var(--home-gold)] text-white shadow-md transition hover:bg-[var(--home-green)] disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-[var(--home-gold)]"
+              >
+                {avatarMutation.isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Camera className="size-4" />
+                )}
+              </button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                className="hidden"
+                onChange={handleAvatarFileChange}
+              />
+            </div>
+
+            <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="text-[18px] font-bold text-[var(--home-green-deep)]">
                   {profile?.name || "Account"}
@@ -109,7 +184,7 @@ export function SettingsPage() {
                   {profile?.badge || "Member"}
                 </span>
               </div>
-              <p className="mt-2 inline-flex items-center gap-3 text-[15px] text-[var(--home-muted)]">
+              <p className="inline-flex items-center gap-3 text-[15px] text-[var(--home-muted)]">
                 {profile?.email || ""}
                 <button
                   type="button"
@@ -120,6 +195,24 @@ export function SettingsPage() {
                   <Copy className="size-4" />
                 </button>
               </p>
+              <div className="pt-1 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={avatarMutation.isPending}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--home-gold)] hover:text-[var(--home-green)] transition underline underline-offset-2"
+                >
+                  <Upload className="size-3.5" />
+                  <span>
+                    {avatarMutation.isPending
+                      ? "Uploading image..."
+                      : "Change photo"}
+                  </span>
+                </button>
+                <span className="text-xs text-stone-400">
+                  JPG, PNG, WebP up to 5MB
+                </span>
+              </div>
             </div>
           </div>
 
