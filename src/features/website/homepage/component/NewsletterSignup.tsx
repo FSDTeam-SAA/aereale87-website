@@ -20,20 +20,33 @@ export function NewsletterSignup() {
     if (
       axios.isAxiosError<{
         message?: string | string[];
-        error?: string;
+        error?: string | { message?: string };
         data?: { message?: string };
       }>(error)
     ) {
       const resData = error.response?.data;
       if (resData) {
-        if (typeof resData.message === "string") return resData.message;
-        if (Array.isArray(resData.message) && resData.message.length > 0)
+        if (typeof resData.message === "string" && resData.message.trim()) {
+          return resData.message;
+        }
+        if (Array.isArray(resData.message) && resData.message.length > 0) {
           return resData.message[0];
-        if (resData.data?.message) return resData.data.message;
-        if (typeof resData.error === "string") return resData.error;
+        }
+        if (typeof resData.error === "string" && resData.error.trim()) {
+          return resData.error;
+        }
+        if (typeof resData.error === "object" && resData.error?.message) {
+          return resData.error.message;
+        }
+        if (resData.data?.message) {
+          return resData.data.message;
+        }
       }
       if (error.response?.status === 400) {
         return "This email is either invalid or already subscribed.";
+      }
+      if (error.response?.status === 409) {
+        return "This email is already subscribed to our newsletter.";
       }
       return error.message || "Failed to subscribe. Please try again.";
     }

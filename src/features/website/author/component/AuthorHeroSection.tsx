@@ -28,8 +28,8 @@ export function AuthorHeroSection({ author }: { author: AuthorPageData }) {
           <h1 className="mt-2 text-[34px] font-bold leading-[1.15] text-[var(--home-green)] sm:text-[44px]">
             {author.name}
           </h1>
-          <p className="mx-auto mt-5 max-w-[1040px] text-[16px] leading-[1.55] text-[var(--home-muted)] sm:text-[18px]">
-            {author.bio}
+          <p className="mx-auto mt-5 max-w-[1040px] text-[16px] leading-[1.65] text-[var(--home-muted)] sm:text-[18px] whitespace-pre-line">
+            {author.bio || "No biography provided yet."}
           </p>
 
           <dl className="mx-auto mt-10 grid max-w-[664px] gap-6 border-[rgba(27,46,36,0.08)] sm:grid-cols-3 sm:gap-8">
